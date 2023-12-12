@@ -1,10 +1,8 @@
-# Template for software repositories by the Caltech Library
+# Baler<img width="30%" align="right" src=".graphics/baler.jpg">
 
-This is a template README file for software repositories.  This first paragraph of the README should summarize your software in a concise fashion, preferably using no more than one or two sentences.
+Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically files a issue to report the problems.
 
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey)](https://choosealicense.com/licenses/bsd-3-clause)
-[![Latest release](https://img.shields.io/github/v/release/caltechlibrary/template.svg?color=b44e88)](https://github.com/caltechlibrary/template/releases)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/pba80-gpj34)](https://data.caltech.edu/records/pba80-gpj34)
 
 
 ## Table of contents
@@ -16,77 +14,77 @@ This is a template README file for software repositories.  This first paragraph 
 * [Getting help](#getting-help)
 * [Contributing](#contributing)
 * [License](#license)
-* [Authors and history](#authors-and-history)
 * [Acknowledgments](#authors-and-acknowledgments)
 
 
 ## Introduction
 
-This repository is a GitHub template repository for creating software project repositories at the Caltech Library.  The [associated wiki page](https://github.com/caltechlibrary/template/wiki/Using-this-template-repo) explains how to use the template repository.
+The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: the author might make typographical errors, or the link destinations might disappear over time, or other reasons. Manually testing links on a regular basis for validity is laborious and error-prone – this is clearly a case where automation is best. That is where Baler comes in.
 
-This README file is in Markdown format, and is meant to provide a template for README files as well an illustration of what the README file can be expected to look like.  For a software project, this [Introduction](#introduction) section &ndash; which you are presently reading &ndash; should provide background for the project, a brief explanation of what the project is about, and optionally, pointers to resources that can help orient readers.  Ideally, this section should be short.
+Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, then filing issue reports when problems are found. It is by no means the first or only GitHub Action for this purpose. Baler aims to be different from the others through its simplicity, the use of a different link checker approach, and its informative issue reports.
 
 
 ## Installation
 
-Begin this section by mentioning any prerequisites that may be important for users to have before they can use your software.  Examples include hardware and operating system requirements.
+This action is available from the [GitHub Marketplace](https://github.com/marketplace?type=&verification=&query=baler). Once you find the page in the GitHub Marketplace, do the following:
 
-Next, provide step-by-step instructions for installing the software, preferably with command examples that can be copy-pasted by readers into their software environments. For example:
+1. In the main branch of your repository, create a `.github/workflows` directory if this directory does not already exist.
+2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
+3. Copy and paste the following content into the file:
+    ```yaml
+    ```
+4. Save the file, add it to your git repository, and commit the changes.
+5. (If you did the steps above outside of GitHub) Push your repository changes to GitHub.
 
-```bash
-a command-line command here
-```
+Refer to the next section for more information.
 
-Sometimes, subsections may be needed for different operating systems or particularly complicated installations.
- 
 
 ## Usage
 
-This [Usage](#usage) section would explain more about how to run the software, what kind of behavior to expect, and so on.
+The trigger condition that causes Baler to run is determined by the `on` statement in your `bad-link-reporter.yml` workflow file. The default triggers are:
 
-### _Basic operation_
+* a scheduled run every night
+* pull requests involving `.md` files
+* push requests involving the workflow file itself or the optional list of ignored URLs
+* manual workflow dispatch execution
 
-Begin with the simplest possible example of how to use your software.  Provide example command lines and/or screen images, as appropriate, to help readers understand how the software is expected to be used.  Many readers are likely to look for command lines they can copy-paste directly from your explanations, so it's best to keep that in mind as you write examples.
+Notice that the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and it has an undiscovered URL error, you can easily generate many identical issue reports before you realize what happened. Instead, the author has found that a once-a-night run is good enough. It does, however, trigger on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately.
 
-### _Additional options_
+You can use [other trigger events defined by GitHub](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) if you wish.
 
-Some projects need to communicate additional information to users and can benefit from additional sections in the README file.  It's difficult to give specific instructions &ndash; a lot depends on your software, your intended audience, etc.  Use your judgment and ask for feedback from users or colleagues to help figure out what else is worth explaining.
+A few parameters control the behavior of Baler; they are described below.
+
+### `files`
+
+### `ignore_list`
+
+### `labels`
 
 
 ## Known issues and limitations
 
-In this section, summarize any notable issues and/or limitations of your software.  If none are known yet, this section can be omitted (and don't forget to remove the corresponding entry in the [Table of Contents](#table-of-contents) too); alternatively, you can leave this section in and write something along the lines of "none are known at this time".
-
 
 ## Getting help
 
-Inform readers of how they can contact you, or at least how they can report problems they may encounter.  This may simply be a request to use the issue tracker on your repository, but many projects have associated chat or mailing lists, and this section is a good place to mention those.
+If you find an issue, please submit it in [the GitHub issue tracker](https://github.com/caltechlibrary/baler/issues) for this repository.
 
 
 ## Contributing
 
-This section is optional; if your repository is for a project that accepts open-source contributions, then this section is where you can mention how people can offer contributions, and point them to your guidelines for contributing.  (If you delete this section, don't forget to remove the corresponding entry in the [Table of Contents](#table-of-contents) too.)
+Your help and participation in enhancing Baler is welcome!  Please visit the [guidelines for contributing](https://github.com/caltechlibrary/baler/blob/main/CONTRIBUTING.md) for some tips on getting started.
 
 
 ## License
 
 Software produced by the Caltech Library is Copyright © 2023 California Institute of Technology.  This software is freely distributed under a BSD-style license.  Please see the [LICENSE](LICENSE) file for more information.
 
-
-## Authors and history
-
-In this section, list the authors and contributors to your software project.  Adding additional notes here about the history of the project can make it more interesting and compelling.  This is also a place where you can acknowledge other contributions to the work and the use of other people's software or tools.
-
-
 ## Acknowledgments
 
 This work was funded by the California Institute of Technology Library.
 
-(If this work was also supported by other organizations, acknowledge them here.  In addition, if your work relies on software libraries, or was inspired by looking at other work, it is appropriate to acknowledge this intellectual debt too.)
-
 <div align="center">
   <br>
   <a href="https://www.caltech.edu">
-    <img width="100" height="100" src="https://raw.githubusercontent.com/caltechlibrary/template/main/.graphics/caltech-round.png">
+    <img width="100" height="100" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/caltech-round.png">
   </a>
 </div>
