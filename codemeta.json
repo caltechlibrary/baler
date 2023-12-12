@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "Baler: BAd Link reportER",
   "identifier": "baler",
-  "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and files an issue if any problems are discovered.",
+  "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
   "version": "0.0.0",
   "datePublished": "2023-12-11",
   "dateCreated": "2023-12-11",
