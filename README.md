@@ -1,6 +1,6 @@
-# Baler<img width="30%" align="right" src=".graphics/baler.jpg">
+# Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="33%" align="right" src=".graphics/baler.jpg">
 
-Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically files a issue to report the problems.
+Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically files an issue to report the problem(s).
 
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey)](https://choosealicense.com/licenses/bsd-3-clause)
 
@@ -19,9 +19,9 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 
 ## Introduction
 
-The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: the author might make typographical errors, or the link destinations might disappear over time, or other reasons. Manually testing links on a regular basis for validity is laborious and error-prone – this is clearly a case where automation is best. That is where Baler comes in.
+The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: the author might make typographical errors, or the link destinations might disappear over time, or other reasons. Manually testing the validity of links on a regular basis is laborious and error-prone – this is clearly a case where automation is best. That's where Baler comes in.
 
-Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, then filing issue reports when problems are found. It is by no means the first or only GitHub Action for this purpose. Baler aims to be different from the others through its simplicity, the use of a different link checker approach, and its informative issue reports.
+Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, then filing issue reports when problems are found. It's by no means the first or only GitHub Action for this purpose. Baler aims to be different from the others through its simplicity, the use of a different link checker approach, and its informative issue reports.
 
 
 ## Installation
@@ -56,12 +56,20 @@ A few parameters control the behavior of Baler; they are described below.
 
 ### `files`
 
+The input parameter `files` sets the file name pattern that determines which files Baler examines. The default is `*.md`, which makes it examine the Markdown files at the top level of a repository. You can set this to multiple patterns by separating patterns with commas (without spaces).
+
 ### `ignore_list`
+
+The value of the input parameter `ignore_list` should be a plain text file file containing URLs that Baler should ignore. Each URL should be written alone on a separate line of the file. The default value is `.github/workflows/ignored-urls.txt`. The file does not have to exist; if it doesn't exist, this parameter simply has no effect. The parameter can only reference a file in the repository and not an external file.
 
 ### `labels`
 
+When Baler files a new issue, it can optionally assign a label to the issue. The value of this input parameter should be the name of one or more labels that is already defined in the GitHub repository's issue system.
+
 
 ## Known issues and limitations
+
+Baler will sometimes mysteriously report a link as unreacheable even though you can access it without trouble from your browser. It's not yet clear what causes this. My current best guess is that it's due to network routing or DNS issues in the environment where the link checker actually runs (i.e., GitHub's computing environment).
 
 
 ## Getting help
@@ -81,6 +89,8 @@ Software produced by the Caltech Library is Copyright © 2023 California Institu
 ## Acknowledgments
 
 This work was funded by the California Institute of Technology Library.
+
+The image of a baler used at the top of this README file was obtained from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg) on 2023-12-11. The photo was taken and contributed by [Glendon Kuhns](https://commons.wikimedia.org/wiki/User:Gkuhns) and made available under the [Creative Commons CC0 1.0 license](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg#Licensing).
 
 <div align="center">
   <br>
