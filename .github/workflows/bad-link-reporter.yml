@@ -1,24 +1,25 @@
 # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.1.
 # This is available as the file "sample-workflow.yml" from the source
-# code repository for Baler: https://github.com/caltechlibrary/baler/.
+# code repository for Baler: https://github.com/caltechlibrary/baler/
 
 name: "Bad Link Reporter"
 
-# Configure this section ─────────────────────────────────────────────
+# Configure this section ────────────────────────────────────────────
 
 env:
   # Files examined by the workflow:
   files: '*.md'
 
-  # Optional file containing a list of URLs to ignore, one per line:
-  ignore: '.github/workflows/ignored-urls.txt'
-
   # Label assigned to issues created by this workflow:
   labels: 'bug'
 
+  # Optional file containing a list of URLs to ignore, one per line:
+  ignore: '.github/workflows/ignored-urls.txt'
+
 on:
   schedule:
-    - cron: "00 11 * * *"
+    # Syntax is: "minute  hour  day-of-month  month  day-of-week"
+    - cron: "00 04 * * *"
   pull_request:
     paths: ['**.md']
   push:
@@ -27,11 +28,17 @@ on:
       - .github/workflows/ignored-urls.txt
   workflow_dispatch:
     inputs:
+      files:
+        description: "Comma-separated paths or regexp's"
+      labels:
+        description: "Comma-separated issue labels"
+      ignore:
+        description: "File containing URLs to ignore"
       debug:
         description: "Run unconditionally in debug mode"
         type: boolean
 
-# The rest of this file should be left as-is ─────────────────────────
+# The rest of this file should be left as-is ────────────────────────
 
 run-name: Test links in files
 jobs:
