@@ -108,7 +108,7 @@ The trigger condition that causes Baler to run is determined by the `on` stateme
 
 Notice that the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and pushing it to GitHub while it has an undiscovered URL error, you can easily generate many identical issue reports before you realize what happened. Instead, the author has found that a once-a-night run is good enough. The workflow does, however, also trigger on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately.
 
-You can use [other trigger events defined by GitHub](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) if you wish.
+For more information about schedule-based execution, please see the GitHub document ["Workflow syntax for GitHub Actions"](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onschedule). For more information about other triggers you can use, please see the GitHub document ["Triggering a workflow"](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow).
 
 ### Workflow configuration parameters
 
@@ -148,6 +148,7 @@ Your help and participation in enhancing Baler is welcome!  Please visit the [gu
 
 Software produced by the Caltech Library is Copyright © 2023 California Institute of Technology.  This software is freely distributed under a BSD-style license.  Please see the [LICENSE](LICENSE) file for more information.
 
+
 ## Acknowledgments
 
 The image of a baler used at the top of this README file was obtained from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg) on 2023-12-11. The photo was taken and contributed by [Glendon Kuhns](https://commons.wikimedia.org/wiki/User:Gkuhns) and made available under the [Creative Commons CC0 1.0 license](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg#Licensing).
@@ -159,8 +160,6 @@ Numerous other broken link checkers similar to Baler can be found in GitHub. Som
 * [Markdown link check](https://github.com/gaurav-nelson/github-action-markdown-link-check)
 * [linksnitch](https://github.com/marketplace/actions/linksnitch-action)
 * [md-links](https://github.com/raulingg/md-links)
-
-
 
 This work was funded by the California Institute of Technology Library.
 
