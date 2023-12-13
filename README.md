@@ -33,9 +33,8 @@ This action is available from the [GitHub Marketplace](https://github.com/market
 3. Copy and paste the following content into the file:
 
     ```yaml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.0.
     # This is available as the file "sample-workflow.yml" from the source
-    # repository for Baler at https://github.com/caltechlibrary/baler/.
+    # code repository for Baler: https://github.com/caltechlibrary/baler/.
 
     name: "Bad Link Reporter"
 
@@ -44,8 +43,10 @@ This action is available from the [GitHub Marketplace](https://github.com/market
     env:
       # Files examined by the workflow:
       files: '*.md'
+
       # Optional file containing a list of URLs to ignore, one per line:
       ignore: '.github/workflows/ignored-urls.txt'
+
       # Label assigned to issues created by this workflow:
       labels: 'bug'
 
@@ -95,28 +96,30 @@ The trigger condition that causes Baler to run is determined by the `on` stateme
 * push requests involving the workflow file itself or the optional list of ignored URLs
 * manual workflow dispatch execution
 
-Notice that the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and it has an undiscovered URL error, you can easily generate many identical issue reports before you realize what happened. Instead, the author has found that a once-a-night run is good enough. It does, however, trigger on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately.
+Notice that the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and pushing it to GitHub while it has an undiscovered URL error, you can easily generate many identical issue reports before you realize what happened. Instead, the author has found that a once-a-night run is good enough. The workflow does, however, also trigger on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately.
 
 You can use [other trigger events defined by GitHub](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) if you wish.
 
-A few parameters control the behavior of Baler; they are described below.
+### Workflow configuration parameters
 
-### `files`
+A few parameters control the behavior of Baler. They are described below.
 
-The input parameter `files` sets the file name pattern that determines which files Baler examines. The default is `*.md`, which makes it examine the Markdown files at the top level of a repository. You can set this to multiple patterns by separating patterns with commas (without spaces).
+#### `files`
 
-### `ignore_list`
+The input parameter `files` sets the file name pattern that identifies the files Baler examines. The default is `*.md`, which makes Baler examine the Markdown files at the top level of a repository. You can set this to multiple patterns by separating patterns with commas (without spaces).
+
+#### `ignore_list`
 
 The value of the input parameter `ignore_list` should be a plain text file file containing URLs that Baler should ignore. Each URL should be written alone on a separate line of the file. The default value is `.github/workflows/ignored-urls.txt`. The file does not have to exist; if it doesn't exist, this parameter simply has no effect. The parameter can only reference a file in the repository and not an external file.
 
-### `labels`
+#### `labels`
 
-When Baler files a new issue, it can optionally assign a label to the issue. The value of this input parameter should be the name of one or more labels that is already defined in the GitHub repository's issue system.
+When Baler files a new issue, it can optionally assign a label to the issue. The value of this input parameter should be the name of one or more labels that is already defined in the GitHub repository's issue system. Separate multiple issue labels with commas.
 
 
 ## Known issues and limitations
 
-Baler will sometimes mysteriously report a link as unreacheable even though you can access it without trouble from your browser. It's not yet clear what causes this. My current best guess is that it's due to network routing or DNS issues in the environment where the link checker actually runs (i.e., GitHub's computing environment).
+When Baler runs on GitHub, it will sometimes mysteriously report a link as unreacheable even though you can access it without trouble from your local computer. It's not yet clear what causes this. My current best guess is that it's due to network routing or DNS issues in the environment where the link checker actually runs (i.e., GitHub's computing environment).
 
 
 ## Getting help
