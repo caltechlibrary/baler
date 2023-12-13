@@ -73,7 +73,7 @@ This action is available from the [GitHub Marketplace](https://github.com/market
         name: Run Bad Link Reporter
         runs-on: ubuntu-latest
         steps:
-          - uses: mhucka/baler@main
+          - uses: caltechlibrary/baler@main
             with:
               files:  ${{github.event.inputs.files  || env.files}}
               labels: ${{github.event.inputs.labels || env.labels}}
