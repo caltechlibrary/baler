@@ -4,8 +4,8 @@
   "name": "Baler: BAd Link reportER",
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
-  "version": "0.0.0",
-  "datePublished": "2023-12-11",
+  "version": "0.0.1",
+  "datePublished": "2023-12-12",
   "dateCreated": "2023-12-11",
   "author": [
     {
@@ -55,7 +55,7 @@
   "issueTracker": "https://github.com/caltechlibrary/baler/issues",
   "downloadUrl": "https://github.com/caltechlibrary/baler/releases",
   "softwareHelp": "https://caltechlibrary.github.io/baler",
-  "relatedLink": "",
+  "relatedLink": "https://data.caltech.edu/records",
   "keywords": [
     "software",
     "automation",
