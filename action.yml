@@ -1,0 +1,140 @@
+# @file    action.yml
+# @brief   GitHub Action definition file for Baler – the Bad Link Reporter
+# @author  Michael Hucka <mhucka@caltech.edu>
+# @license Please see the file named LICENSE in the repository
+# @repo    https://github.com/caltechlibrary/baler
+
+name: "Baler – BAd Link reportER"
+description: "Test links in repo files and file issues for problems found"
+
+inputs:
+  files:
+    description: "Regexes for files to test. Can be comma-separated list."
+    default: '*.md'
+    required: true
+    type: string
+  ignore:
+    description: "File containing a list of URLs to ignore, one per line."
+    default: '.github/workflows/ignored-urls.txt'
+    required: false
+    type: string
+  labels:
+    description: "Labels assigned to GitHub issues created by this workflow."
+    default: 'bug'
+    required: false
+    type: string
+  debug:
+    description: "Run tests even if files are unchanged"
+    default: false
+    required: false
+    type: boolean
+
+runs:
+  using: composite
+  steps:
+    - name: Check out source repository.
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 10
+
+    - name: Check if the files were changed in latest commit.
+      uses: MarceloPrado/has-changed-path@v1.0.1
+      id: test-files
+      with:
+        paths: ${{env.files}}
+
+    - name: Report if relevant files were not changed & stop remaining steps.
+      if: steps.test-files.outputs.changed != 'true' && github.event_name != 'workflow_dispatch'
+      shell: bash
+      run: |
+          echo "Link testing **skipped** because the relevant files were not changed." >> $GITHUB_STEP_SUMMARY
+          echo "The files tested were the following: <code>${{env.files}}</code>" >> $GITHUB_STEP_SUMMARY
+          echo "continue=false" >> $GITHUB_ENV
+
+    - name: Set flag to continue rest of workflow.
+      if: steps.test-files.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+      shell: bash
+      run: |
+        echo "continue=true" >> $GITHUB_ENV
+        echo "Continuing workflow."
+
+    - name: Configure link checker.
+      if: env.continue == 'true'
+      shell: bash
+      run: |
+        if [ -e ${{env.ignore}} ]; then
+          cp -f ${{env.ignore}} .lycheeignore
+          echo "Using file of URLs to ignore: ${{env.ignore}}"
+        else
+          echo "File of URLs to ignore does not exist: ${{env.ignore}}"
+        fi
+
+    - name: Test URLs found inside Markdown files.
+      if: env.continue == 'true'
+      uses: lycheeverse/lychee-action@v1.8.0
+      with:
+        args: --no-progress --scheme https --scheme http --exclude-mail --include-verbatim ${{env.files}}
+        debug: ${{inputs.debug}}
+        format: markdown
+        jobSummary: false
+
+    - name: Post-process the output.
+      if: env.continue == 'true' && env.lychee_exit_code != 0
+      # Munge lychee's output to remove needless bits & improve the formatting.
+      shell: bash
+      run: |
+        sed -e 's/^## Summary//' \
+            -e 's/^|.*//g' \
+            -e 's/^## Errors per input//' \
+            -e 's/{.*$//g' \
+            -e 's/| Failed:/– Failed:/g' \
+            -e 's/| Timeout:/– Timeout:/g' \
+            -e 's/^\[Full Github Actions output\(.*\)/\nThis content was produced by a [Github Action\1./' \
+            -e 's/\(.*\)\[\(.*\)\]\(.*\)/\1[`\2`]\3/' \
+            < lychee/out.md > lychee/report.md
+
+    - name: Open a new issue/ticket to report the problems.
+      if: env.continue == 'true' && env.lychee_exit_code != 0
+      id: create-issue
+      uses: peter-evans/create-issue-from-file@v4
+      with:
+        token: ${{github.token}}
+        title: Invalid URLs in Markdown files
+        content-filepath: ./lychee/report.md
+        labels: ${{env.labels}}
+
+    - name: Put a link to the issue in the workflow output.
+      if: env.continue == 'true' && env.lychee_exit_code != 0
+      env:
+        issue-number: ${{steps.create-issue.outputs.issue-number}}
+      shell: bash
+      run: |
+        echo "## Invalid URLs found" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Ticket [#${{env.issue-number}}](https://github.com/${{github.repository}}/issues/${{env.issue-number}}) has been created." >> $GITHUB_STEP_SUMMARY
+
+    - name: Report if checks were successful.
+      if: env.continue == 'true' && env.lychee_exit_code == 0
+      shell: bash
+      run: |
+          echo "No bad links found in the files matched by this pattern:" >> $GITHUB_STEP_SUMMARY
+          echo "<code>${{env.files}}</code>" >> $GITHUB_STEP_SUMMARY
+
+    - name: Print context and variables if debugging is on.
+      if: inputs.debug == true || inputs.debug == 'true'
+      shell: bash
+      run: |
+        echo "Printing context for debugging"
+        echo "repository_owner = ${{github.repository_owner}}"
+        echo "repository = ${{github.event.repository.name}}"
+        echo "files: ${{inputs.files}}"
+        echo "ignore: ${{inputs.ignore}}"
+        echo "labels: ${{inputs.labels}}"
+        echo "continue = ${{env.continue}}"
+        echo "env.lychee_exit_code = ${{env.lychee_exit_code}}"
+
+
+author: "Michael Hucka -- https://github.com/mhucka"
+branding:
+  icon: cloud-off
+  color: orange
