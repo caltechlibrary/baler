@@ -64,16 +64,6 @@ This action is available from the [GitHub Marketplace](https://github.com/market
           - .github/workflows/bad-link-reporter.yml
           - .github/workflows/ignored-urls.txt
       workflow_dispatch:
-        inputs:
-          files:
-            description: "Comma-separated paths or regexp's"
-          labels:
-            description: "Comma-separated issue labels"
-          ignore:
-            description: "File containing URLs to ignore"
-          debug:
-            description: "Run unconditionally in debug mode"
-            type: boolean
 
     # The rest of this file should be left as-is ────────────────────────
 
