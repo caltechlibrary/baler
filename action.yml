@@ -35,6 +35,7 @@ runs:
     - name: Check out source repository.
       uses: actions/checkout@v3
       with:
+        # Limit the git history fetched, for efficiency.
         fetch-depth: 10
 
     - name: Check if the files were changed in latest commit.
@@ -68,6 +69,14 @@ runs:
         else
           echo "File of URLs to ignore does not exist: ${{env.ignore}}"
         fi
+
+    # Implementation notes:
+    # - This purposefully doesn't use lychee's caching facility, because
+    #   turning it on results in lychee NOT reporting the ORIGINAL error when
+    #   a cached URL is encountered. This is very unhelpful in this context.
+    #
+    # - More information about optional settings for the lychee-action GHA
+    #   can be found at https://github.com/lycheeverse/lychee-action
 
     - name: Test URLs found inside Markdown files.
       if: env.continue == 'true'
