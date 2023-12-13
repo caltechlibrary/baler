@@ -14,7 +14,7 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 * [Getting help](#getting-help)
 * [Contributing](#contributing)
 * [License](#license)
-* [Acknowledgments](#authors-and-acknowledgments)
+* [Acknowledgments](#acknowledgments)
 
 
 ## Introduction
@@ -31,8 +31,55 @@ This action is available from the [GitHub Marketplace](https://github.com/market
 1. In the main branch of your repository, create a `.github/workflows` directory if this directory does not already exist.
 2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
 3. Copy and paste the following content into the file:
+
     ```yaml
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.0.
+    # This is available as the file "sample-workflow.yml" from the source
+    # repository for Baler at https://github.com/caltechlibrary/baler/.
+
+    name: "Bad Link Reporter"
+
+    # Configure this section ─────────────────────────────────────────────
+
+    env:
+      # Files examined by the workflow:
+      files: '*.md'
+      # Optional file containing a list of URLs to ignore, one per line:
+      ignore: '.github/workflows/ignored-urls.txt'
+      # Label assigned to issues created by this workflow:
+      labels: 'bug'
+
+    on:
+      schedule:
+        - cron: "00 11 * * *"
+      pull_request:
+        paths: ['**.md']
+      push:
+        paths:
+          - .github/workflows/bad-link-reporter.yml
+          - .github/workflows/ignored-urls.txt
+      workflow_dispatch:
+        inputs:
+          debug:
+            description: "Run unconditionally in debug mode"
+            type: boolean
+
+    # The rest of this file should be left as-is ─────────────────────────
+
+    run-name: Test links in files
+    jobs:
+      run-baler:
+        name: Run Bad Link Reporter
+        runs-on: ubuntu-latest
+        steps:
+          - uses: mhucka/baler@main
+            with:
+              files:  ${{github.event.inputs.files  || env.files}}
+              labels: ${{github.event.inputs.labels || env.labels}}
+              ignore: ${{github.event.inputs.ignore || env.ignore}}
+              debug:  ${{github.event.inputs.debug  || env.debug}}
     ```
+
 4. Save the file, add it to your git repository, and commit the changes.
 5. (If you did the steps above outside of GitHub) Push your repository changes to GitHub.
 
@@ -95,6 +142,6 @@ The image of a baler used at the top of this README file was obtained from [Wiki
 <div align="center">
   <br>
   <a href="https://www.caltech.edu">
-    <img width="100" height="100" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/caltech-round.png">
+    <img width="100" height="100" alt="Caltech logo" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/caltech-round.png">
   </a>
 </div>
