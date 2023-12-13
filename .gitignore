@@ -19,3 +19,5 @@
 # A useful starting point for global .gitignore file contents can be found at
 # https://github.com/github/gitignore/tree/main/Global (as of 2022-07-14).
 # =============================================================================
+
+*.bak
