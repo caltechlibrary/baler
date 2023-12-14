@@ -36,12 +36,13 @@ This action is available from the [GitHub Marketplace](https://github.com/market
 3. Copy and paste the [following content](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into the file:
 
     ```yaml
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.1.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler/
 
     name: "Bad Link Reporter"
 
-    # Configure this section ────────────────────────────────────────────
+    # Configure this section ─────────────────────────────────────────────
 
     env:
       # Files examined by the workflow:
@@ -65,7 +66,7 @@ This action is available from the [GitHub Marketplace](https://github.com/market
           - .github/workflows/ignored-urls.txt
       workflow_dispatch:
 
-    # The rest of this file should be left as-is ────────────────────────
+    # The rest of this file should be left as-is ─────────────────────────
 
     run-name: Test links in files
     jobs:
@@ -78,7 +79,6 @@ This action is available from the [GitHub Marketplace](https://github.com/market
               files:  ${{github.event.inputs.files  || env.files}}
               labels: ${{github.event.inputs.labels || env.labels}}
               ignore: ${{github.event.inputs.ignore || env.ignore}}
-              debug:  ${{github.event.inputs.debug  || env.debug}}
     ```
 
 4. Save the file, add it to your git repository, and commit the changes.
@@ -96,7 +96,7 @@ The trigger condition that causes Baler to run is determined by the `on` stateme
 * push requests involving the workflow file itself or the optional list of ignored URLs
 * manual workflow dispatch execution
 
-Notice that the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and pushing it to GitHub while it has an undiscovered URL error, you can easily generate many identical issue reports before you realize what happened. Instead, the author has found that a once-a-night run is good enough. The workflow does, however, also trigger on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately.
+The workflow triggers on pull requests involving Markdown files, because that's a situation when it makes sense to test the URLs immediately. However, the default configuration does **not** trigger execution on every push. That's because running tests at every push is rarely a good idea: if you're actively editing a file like the README file and it has an undiscovered URL error, you can easily trigger the creation of many issue reports before you realize what happened. Instead, a once-a-night run is good enough.
 
 For more information about schedule-based execution, please see the GitHub document ["Workflow syntax for GitHub Actions"](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onschedule). For more information about other triggers you can use, please see the GitHub document ["Triggering a workflow"](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow).
 

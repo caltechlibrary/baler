@@ -4,7 +4,7 @@
 
 name: "Bad Link Reporter"
 
-# Configure this section ────────────────────────────────────────────
+# Configure this section ─────────────────────────────────────────────
 
 env:
   # Files examined by the workflow:
@@ -28,7 +28,7 @@ on:
       - .github/workflows/ignored-urls.txt
   workflow_dispatch:
 
-# The rest of this file should be left as-is ────────────────────────
+# The rest of this file should be left as-is ─────────────────────────
 
 run-name: Test links in files
 jobs:
@@ -41,4 +41,3 @@ jobs:
           files:  ${{github.event.inputs.files  || env.files}}
           labels: ${{github.event.inputs.labels || env.labels}}
           ignore: ${{github.event.inputs.ignore || env.ignore}}
-          debug:  ${{github.event.inputs.debug  || env.debug}}

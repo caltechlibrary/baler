@@ -24,45 +24,117 @@ inputs:
     required: false
     type: string
   debug:
-    description: "Run tests even if files are unchanged"
+    description: "Run in debug mode."
     default: false
     required: false
     type: boolean
 
+  # Internal parameters.
+  lycheeVersion:
+    description: "Version of lychee link checker program"
+    default: 0.13.0
+    required: false
+
+# Explanation for how different GitHub events are handled, and why:
+#
+# workflow_dispatch: Tests all .md files matched by ${{inputs.files}},
+#     regardless of whether they have been modified in the latest commit.
+#     Rationale: if you're invoking the action manually, you probably intend
+#     to test the files as they exist in the repository now, and not relative
+#     to a past commit or other past event.
+#
+# schedule: Tests all .md files matched by ${{inputs.files}}, regardless
+#     of whether they have been modified in the latest commit. Rationale:
+#     (1) it wouldn't make sense to have a nightly run test only the files
+#     modified in the latest commit, because a previous commit might also
+#     have modified some Markdown files, which means the latest commit is
+#     not a good reference point for this purpose; and (2) regularly testing
+#     all Markdown files, regardless of recent edits, is good for discovering
+#     links that worked in the past but stopped working due to (e.g.) link
+#     rot. In case #2, there are no local file changes.
+#
+# all other events: Test the .md files that are being changed as a result of
+#     request, compared to the versions of the files in the destination
+#     branch. The trigger/invocation is controlled by the trigger rules of
+#     the invoking workflow. (So, for example, in the sample workflow
+#     provided for users, pull requests result in testing .md files that were
+#     modified by the pull request, but push events do not test any .md files
+#     unless the push changes the workflow file itself or the file containing
+#     the list of ignored urls.)
+
 runs:
   using: composite
   steps:
+    - name: Set preliminary run-time configuration variables.
+      shell: bash
+      run: |
+        if [[ ${{github.event_name == 'push'}} ]]; then
+          echo "depth_needed=2" >> $GITHUB_ENV
+        elif [[ ${{github.event_name == 'pull_request'}} ]]; then
+          echo "depth_needed=1" >> $GITHUB_ENV
+        else
+          echo "depth_needed=0" >> $GITHUB_ENV
+        fi
+
     - name: Check out source repository.
       uses: actions/checkout@v3
       with:
-        # Limit the git history fetched, for efficiency.
-        fetch-depth: 10
+        fetch-depth: ${{env.depth_needed}}
+        persist-credentials: true
 
-    - name: Check if the files were changed in latest commit.
-      uses: MarceloPrado/has-changed-path@v1.0.1
-      id: test-files
+    - name: Get list of all files matching the desired pattern.
+      uses: tj-actions/glob@v17
+      id: matching-files
       with:
-        paths: ${{env.files}}
+        files: ${{inputs.files}}
 
-    - name: Report if relevant files were not changed & stop remaining steps.
-      if: steps.test-files.outputs.changed != 'true' && github.event_name != 'workflow_dispatch'
+    - name: Check if any files matching the pattern have been modified.
+      id: changed-files
+      uses: tj-actions/changed-files@v40
+      with:
+        files: ${{inputs.files}}
+
+    - name: Construct list of files to act on.
       shell: bash
       run: |
+        event=${{github.event_name}}
+        if [[ "$event" == "workflow_dispatch" || "$event" == "schedule" ]]; then
+          echo "considered=(${{steps.matching-files.outputs.paths}})" >> $GITHUB_ENV
+        elif [[ "${{steps.changed-files.outputs.any_changed}}" == "true" ]]; then
+          echo "considered=(${{steps.changed-files.outputs.all_changed_files}})" >> $GITHUB_ENV
+        fi
+
+    - name: Decide whether to proceed.
+      shell: bash
+      run: |
+        if [[ "${{steps.changed-files.outputs.any_changed}}" == "true" || "${{github.event_name}}" == "workflow_dispatch" ]]; then
+          echo "Continuing workflow."
+          echo "continue=true" >> $GITHUB_ENV
+        else
           echo "Link testing **skipped** because the relevant files were not changed." >> $GITHUB_STEP_SUMMARY
-          echo "The files tested were the following: <code>${{env.files}}</code>" >> $GITHUB_STEP_SUMMARY
+          echo "The files tested were the following:<code>${{inputs.files}}</code>" >> $GITHUB_STEP_SUMMARY
           echo "continue=false" >> $GITHUB_ENV
+        fi
 
-    - name: Set flag to continue rest of workflow.
-      if: steps.test-files.outputs.changed == 'true' || github.event_name == 'workflow_dispatch'
+    - name: Install link checker program.
+      if: env.continue == 'true'
       shell: bash
       run: |
-        echo "continue=true" >> $GITHUB_ENV
-        echo "Continuing workflow."
+        echo "Downloading and installing lychee binary."
+        # First clean up artifacts from previous run in case it crashed.
+        rm -rf "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz" lychee
+        curl -sLO "https://github.com/lycheeverse/lychee/releases/download/v${{inputs.lycheeVersion}}/lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
+        tar -xzf "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
+        rm -f "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
+        install -t "$HOME/.local/bin" -D lychee
+        rm lychee
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
     - name: Configure link checker.
       if: env.continue == 'true'
       shell: bash
       run: |
+        echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
         if [ -e ${{env.ignore}} ]; then
           cp -f ${{env.ignore}} .lycheeignore
           echo "Using file of URLs to ignore: ${{env.ignore}}"
@@ -77,40 +149,52 @@ runs:
     #
     # - More information about optional settings for the lychee-action GHA
     #   can be found at https://github.com/lycheeverse/lychee-action
+    #
+    # - The documented exit codes for lychee are as follows (based on
+    #   https://github.com/lycheeverse/lychee#exit-codes as of 2023-12-14):
+    #    0 = success (links checked successfully or skipped as configured)
+    #    1 = missing inputs, unexpected runtime failure, or config error
+    #    2 = link check failures (if any non-excluded link failed the check)
+    #    3 = errors in the config file
 
-    - name: Test URLs found inside Markdown files.
+    - name: Run link checker to test URLs inside Markdown files.
       if: env.continue == 'true'
-      uses: lycheeverse/lychee-action@v1.8.0
-      with:
-        args: --no-progress --scheme https --scheme http --exclude-mail --include-verbatim ${{env.files}}
-        debug: ${{inputs.debug}}
-        format: markdown
-        jobSummary: false
-
-    - name: Post-process the output.
-      if: env.continue == 'true' && env.lychee_exit_code != 0
-      # Munge lychee's output to remove needless bits & improve the formatting.
-      shell: bash
+      shell: bash {0}
+      continue-on-error: true
       run: |
-        sed -e 's/^## Summary//' \
-            -e 's/^|.*//g' \
-            -e 's/^## Errors per input//' \
-            -e 's/{.*$//g' \
-            -e 's/| Failed:/– Failed:/g' \
-            -e 's/| Timeout:/– Timeout:/g' \
-            -e 's/^\[Full Github Actions output\(.*\)/\nThis content was produced by a [Github Action\1./' \
-            -e 's/\(.*\)\[\(.*\)\]\(.*\)/\1[`\2`]\3/' \
-            < lychee/out.md > lychee/report.md
+        lychee_tmp="$(mktemp)"
+        changed_files=${{env.considered}}
+        workflow="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}?check_suite_focus=true"
+        lychee --output $lychee_tmp --no-progress --format markdown --scheme https --scheme http --exclude-mail --include-verbatim ${changed_files[@]}
+        exit_code=$?
+        echo "lychee_exit_code=$exit_code" >> $GITHUB_ENV
+        if [[ $exit_code == 2 ]]; then
+          sed -e 's/^## Summary//' \
+              -e 's/^|.*//g' \
+              -e 's/^## Errors per input//' \
+              -e 's/{.*$//g' \
+              -e 's/| Failed:/– Failed:/g' \
+              -e 's/| Timeout:/– Timeout:/g' \
+              -e 's/\(.*\)\[\(.*\)\]\(.*\)/\1[`\2`]\3/' \
+              < $lychee_tmp > ${{env.lychee_output}}
+          echo >> ${{env.lychee_output}}
+          echo "This content was produced by a [GitHub Action]($workflow)." >> ${{env.lychee_output}}
+        elif [[ $exit_code == 1 || $exit_code == 3 ]]; then
+          echo "## Bad link reporter encountered an exception" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This was most likely caused by a bug in Baler." >> $GITHUB_STEP_SUMMARY
+          echo "Please report this to the developers." >> $GITHUB_STEP_SUMMARY
+        fi
 
     - name: Open a new issue/ticket to report the problems.
       if: env.continue == 'true' && env.lychee_exit_code != 0
       id: create-issue
       uses: peter-evans/create-issue-from-file@v4
       with:
-        token: ${{github.token}}
         title: Invalid URLs in Markdown files
-        content-filepath: ./lychee/report.md
+        content-filepath: ${{env.lychee_output}}
         labels: ${{env.labels}}
+        token: ${{github.token}}
 
     - name: Put a link to the issue in the workflow output.
       if: env.continue == 'true' && env.lychee_exit_code != 0
@@ -127,20 +211,24 @@ runs:
       shell: bash
       run: |
           echo "No bad links found in the files matched by this pattern:" >> $GITHUB_STEP_SUMMARY
-          echo "<code>${{env.files}}</code>" >> $GITHUB_STEP_SUMMARY
+          echo "<code>${{inputs.files}}</code>" >> $GITHUB_STEP_SUMMARY
 
-    - name: Print context and variables if debugging is on.
-      if: inputs.debug == true || inputs.debug == 'true'
+    - name: Log internal variable values, in case they're needed for debugging.
       shell: bash
       run: |
-        echo "Printing context for debugging"
+        echo "Summary of run-time variables"
+        echo "============================="
         echo "repository_owner = ${{github.repository_owner}}"
         echo "repository = ${{github.event.repository.name}}"
+        echo "event name = ${{github.event_name}}"
         echo "files: ${{inputs.files}}"
         echo "ignore: ${{inputs.ignore}}"
         echo "labels: ${{inputs.labels}}"
+        echo "depth_needed (for git history) = ${{env.depth_needed}}"
+        echo "files considered = ${{env.considered}}"
         echo "continue = ${{env.continue}}"
         echo "env.lychee_exit_code = ${{env.lychee_exit_code}}"
+        echo "============================="
 
 
 author: "Michael Hucka -- https://github.com/mhucka"
