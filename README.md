@@ -3,7 +3,7 @@
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
 
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/baler.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/baler/releases)
-[![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause) [![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/kyxhk-bpa60)](https://data.caltech.edu/records/kyxhk-bpa60)
+[![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause) [![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/h75w5-y7y57)](https://data.caltech.edu/records/h75w5-y7y57)
 
 
 ## Table of contents
