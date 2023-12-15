@@ -118,6 +118,14 @@ Telling Baler to ignore certain URLs is useful if some of your files contain fak
 
 When Baler opens a new issue after it finds problems, it can optionally assign a label to the issue. The value of this input parameter should be the name of one or more labels that is already defined in the GitHub repository's issue system. Multiple issue labels can be written, with commas between them.
 
+### GitHub event handling
+
+The following is an explanation of how different types of GitHub events are handled, and the reasoning behind the choices:
+
+* _`workflow_dispatch` events_: test all `.md` files matched by the pattern defined by `inputs.files`, regardless of whether the files were modified in the latest commit. Rationale: if you're invoking the action manually, you probably intend to test the files as they exist in the repository now, and not relative to a past commit or other past event.
+* _`schedule` events_: test all `.md` files matched by `inputs.files`, regardless of whether they have been modified in the latest commit. Rationale: (1) it wouldn't make sense to have periodic runs test only the files modified in the latest commit, because a _previous_ commit (or the n<sup>th</sup> previous) might also have modified some Markdown files, which means the latest commit is not a good reference point; and (2) regularly testing _all_ Markdown files, regardless of whether they were edited recently, is an important way to find links that worked in the past but stopped working due to link rot or other problems.
+* _All other event types_: test the `.md` files that will be changed (compared to the versions of those files in the destination branch) as a result of the event. The exact trigger condition is under the control of the invoking workflow. For example, in the [sample workflow](sample-workflow.yml), `pull_request` events result in testing `.md` files that were modified by the pull request, but `push` events do not test any `.md` files _unless_ the push also changes the workflow file itself or the file containing the list of ignored urls.
+
 
 ## Known issues and limitations
 
@@ -143,7 +151,7 @@ Software produced by the Caltech Library is Copyright © 2023 California Institu
 
 The image of a baler used at the top of this README file was obtained from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg) on 2023-12-11. The photo was taken and contributed by [Glendon Kuhns](https://commons.wikimedia.org/wiki/User:Gkuhns) and made available under the [Creative Commons CC0 1.0 license](https://commons.wikimedia.org/wiki/File:Baling_Small_Square_Bales_with_Accumulator.jpg#Licensing).
 
-Numerous other broken link checkers similar to Baler can be found in GitHub. Some of them served as sources of ideas for what to do in Baler, and I want to acknowledge this debt. The following are notable programs that I looked at (and if you are the author of another one not listed here, please don't feel slighted – I probably missed it simply due to limited time, inadequate or incomplete search, and lack of serendipity):
+Numerous other broken link checkers similar to Baler can be found in GitHub. Some of them served as sources of ideas for what to do in Baler, and I want to acknowledge this debt. The following are notable programs that I looked at (and if you are the author of another one not listed here, please don't feel slighted – I probably missed it simply due to limited time, inadequate or incomplete search, or lack of serendipity):
 
 * [My Broken Link Checker](https://github.com/marketplace/actions/my-broken-link-checker)
 * [Broken Link Checker Action](https://github.com/marketplace/actions/broken-link-checker-action)
