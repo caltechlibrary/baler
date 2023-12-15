@@ -86,7 +86,7 @@ define instructions_text =
  3. Update the version number in codemeta.json.
  4. Check CHANGES.md, update if needed, and commit changes.
  5. Check the output of $(color)make report$(reset) (ignoring current id & DOI).
- 6. Run $(color)make really-clean$(reset).
+ 6. Run $(color)make clean$(reset).
  7. Run $(color)make release$(reset); after some steps, it will open a file
     in your editor to write GitHub release notes. Copy the notes
     from CHANGES.md. Save the opened file to finish the process.
