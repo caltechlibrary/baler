@@ -41,9 +41,6 @@ on:
       ignore:
         description: "File containing URLs to ignore"
         default: '.github/workflows/ignored-urls.txt'
-      debug:
-        description: "Run unconditionally in debug mode"
-        type: boolean
 
 # The rest of this file should be left as-is ─────────────────────────
 
@@ -58,4 +55,3 @@ jobs:
           files:  ${{github.event.inputs.files  || env.files}}
           labels: ${{github.event.inputs.labels || env.labels}}
           ignore: ${{github.event.inputs.ignore || env.ignore}}
-          debug:  ${{github.event.inputs.debug  || env.debug}}
