@@ -8,10 +8,10 @@ authors:
 abstract: Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.
 repository-code: "https://github.com/caltechlibrary/baler"
 type: software
-version: 1.21.0
+version: 0.0.2
 license-url: "https://github.com/caltechlibrary/baler/blob/main/LICENSE"
 keywords:
   - automation
   - software
   - GitHub Actions
-date-released: 2023-12-11
+date-released: 2023-12-14
