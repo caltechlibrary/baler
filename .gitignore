@@ -1,9 +1,9 @@
 # =========================================================== -*- gitignore -*-
 # @file    .gitignore
 # @brief   Files and patterns for files and subdirs that git should ignore
-# @date    CREATION_DATE
+# @date    2023-12-14
 # @license Please see the file named LICENSE in the project directory
-# @website https://github.com/caltechlibrary/PROJECT
+# @website https://github.com/caltechlibrary/baler
 #
 # The approach we suggest is to add ONLY project-specific rules here. Put
 # rules that apply to your way of doing things (and the particular tools you
