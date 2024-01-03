@@ -154,7 +154,8 @@ runs:
         cache = false
         no_progress = true
         timeout = 30
-        retry_wait_time = 10
+        retry_wait_time = 30
+        max_retries = 3
         include_mail = false
         include_verbatim = true
         exclude_all_private = true
