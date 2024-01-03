@@ -35,6 +35,8 @@ jobs:
   run-baler:
     name: Run Bad Link Reporter
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
       - uses: caltechlibrary/baler@main
         with:
