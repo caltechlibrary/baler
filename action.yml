@@ -140,14 +140,15 @@ runs:
       if: env.continue == 'true'
       shell: bash
       run: |
-        echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
-        echo "lychee_config=.git/lychee.toml" >> $GITHUB_ENV
+        # Copy user's URL ignore list to file name expected by lychee.
         if [ -e ${{env.ignore}} ]; then
           cp -f ${{env.ignore}} .lycheeignore
           echo "Using file of URLs to ignore: ${{env.ignore}}"
         else
           echo "File of URLs to ignore does not exist: ${{env.ignore}}"
         fi
+        # Create configuration file for lychee.
+        lychee_config=.git/lychee.toml
         cat <<EOF > ${lychee_config}
         scheme = ["https", "http"]
         cache = false
@@ -159,6 +160,9 @@ runs:
         exclude_all_private = true
         insecure = true
         EOF
+        # Set variables used in later steps.
+        echo "lychee_config=${lychee_config}" >> $GITHUB_ENV
+        echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
 
     # Implementation notes:
     # - This purposefully doesn't use lychee's caching facility, because
