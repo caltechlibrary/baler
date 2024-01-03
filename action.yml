@@ -30,9 +30,13 @@ inputs:
     type: boolean
 
   # Internal parameters.
-  lycheeVersion:
+  lyVersion:
     description: "Version of lychee link checker program"
     default: 0.13.0
+    required: false
+  lyDownloadBase:
+    description: "Base download URL for Lychee binaries"
+    default: 'https://github.com/lycheeverse/lychee/releases/download'
     required: false
 
 # Explanation for how different GitHub events are handled, and why:
@@ -121,11 +125,12 @@ runs:
       shell: bash
       run: |
         echo "Downloading and installing lychee binary."
+        tarball=lychee-v${{inputs.lyVersion}}-x86_64-unknown-linux-gnu.tar.gz
         # First clean up artifacts from previous run in case it crashed.
-        rm -rf "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz" lychee
-        curl -sLO "https://github.com/lycheeverse/lychee/releases/download/v${{inputs.lycheeVersion}}/lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
-        tar -xzf "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
-        rm -f "lychee-v${{inputs.lycheeVersion}}-x86_64-unknown-linux-gnu.tar.gz"
+        rm -rf $tarball lychee
+        curl -sLO "${{inputs.lyDownloadBase}}/v${{inputs.lyVersion}}/$tarball"
+        tar -xzf $tarball
+        rm -f $tarball
         install -t "$HOME/.local/bin" -D lychee
         rm lychee
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -165,7 +170,7 @@ runs:
         lychee_tmp="$(mktemp)"
         changed_files=${{env.considered}}
         workflow="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}?check_suite_focus=true"
-        lychee --output $lychee_tmp --no-progress --format markdown --scheme https --scheme http --exclude-mail --include-verbatim ${changed_files[@]}
+        lychee --output $lychee_tmp --no-progress --retry-wait-time 10 --timeout 30 --format markdown --scheme https --scheme http --exclude-mail --include-verbatim ${changed_files[@]}
         exit_code=$?
         echo "lychee_exit_code=$exit_code" >> $GITHUB_ENV
         if [[ $exit_code == 2 ]]; then
