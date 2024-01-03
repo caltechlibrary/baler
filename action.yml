@@ -88,12 +88,12 @@ runs:
 
     - name: Get list of all files matching the desired pattern.
       uses: tj-actions/glob@v17
-      id: matching-files
+      id: match-files
       with:
         files: ${{inputs.files}}
 
     - name: Check if any files matching the pattern have been modified.
-      id: changed-files
+      id: test-changes
       uses: tj-actions/changed-files@v40
       with:
         files: ${{inputs.files}}
@@ -103,15 +103,16 @@ runs:
       run: |
         event=${{github.event_name}}
         if [[ "$event" == "workflow_dispatch" || "$event" == "schedule" ]]; then
-          echo "considered=(${{steps.matching-files.outputs.paths}})" >> $GITHUB_ENV
-        elif [[ "${{steps.changed-files.outputs.any_changed}}" == "true" ]]; then
-          echo "considered=(${{steps.changed-files.outputs.all_changed_files}})" >> $GITHUB_ENV
+          echo "considered=(${{steps.match-files.outputs.paths}})" >> $GITHUB_ENV
+        elif [[ "${{steps.test-changes.outputs.any_changed}}" == "true" ]]; then
+          echo "considered=(${{steps.test-changes.outputs.all_changed_files}})" >> $GITHUB_ENV
         fi
 
     - name: Decide whether to proceed.
       shell: bash
       run: |
-        if [[ "${{steps.changed-files.outputs.any_changed}}" == "true" || "${{github.event_name}}" == "workflow_dispatch" ]]; then
+        if [[ "${{steps.test-changes.outputs.any_changed}}" == "true" \
+             || "${{github.event_name}}" == "workflow_dispatch" ]]; then
           echo "Continuing workflow."
           echo "continue=true" >> $GITHUB_ENV
         else
@@ -140,12 +141,24 @@ runs:
       shell: bash
       run: |
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
+        echo "lychee_config=.git/lychee.toml" >> $GITHUB_ENV
         if [ -e ${{env.ignore}} ]; then
           cp -f ${{env.ignore}} .lycheeignore
           echo "Using file of URLs to ignore: ${{env.ignore}}"
         else
           echo "File of URLs to ignore does not exist: ${{env.ignore}}"
         fi
+        cat <<EOF > ${lychee_config}
+        scheme = ["https", "http"]
+        cache = false
+        no_progress = true
+        timeout = 30
+        retry_wait_time = 10
+        include_mail = false
+        include_verbatim = true
+        exclude_all_private = true
+        insecure = true
+        EOF
 
     # Implementation notes:
     # - This purposefully doesn't use lychee's caching facility, because
@@ -170,7 +183,7 @@ runs:
         lychee_tmp="$(mktemp)"
         changed_files=${{env.considered}}
         workflow="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}?check_suite_focus=true"
-        lychee --output $lychee_tmp --no-progress --retry-wait-time 10 --timeout 30 --format markdown --scheme https --scheme http --exclude-mail --include-verbatim ${changed_files[@]}
+        lychee --config ${{env.lychee_config}} --output $lychee_tmp --format markdown ${changed_files[@]}
         exit_code=$?
         echo "lychee_exit_code=$exit_code" >> $GITHUB_ENV
         if [[ $exit_code == 2 ]]; then
