@@ -1,8 +1,8 @@
-# @file    action.yml
-# @brief   GitHub Action definition file for Baler – the Bad Link Reporter
-# @author  Michael Hucka <mhucka@caltech.edu>
-# @license Please see the file named LICENSE in the repository
-# @repo    https://github.com/caltechlibrary/baler
+# GitHub Action definition file for Baler – the Bad Link Reporter.
+#
+# Copyright 2024 California Institute of Technology.
+# License: Modified BSD 3-clause – see file "LICENSE" in the project website.
+# Website: https://github.com/caltechlibrary/baler
 
 name: "Baler – BAd Link reportER"
 description: "Test links in repo files and file issues for problems found"
@@ -207,10 +207,12 @@ runs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This was most likely caused by a bug in Baler." >> $GITHUB_STEP_SUMMARY
           echo "Please report this to the developers." >> $GITHUB_STEP_SUMMARY
+          # Set continue to false to abort the rest of the workflow.
+          echo "continue=false" >> $GITHUB_ENV
         fi
 
     - name: Open a new issue/ticket to report the problems.
-      if: env.continue == 'true' && env.lychee_exit_code != 0
+      if: env.continue == 'true'
       id: create-issue
       uses: peter-evans/create-issue-from-file@v4
       with:
@@ -220,7 +222,7 @@ runs:
         token: ${{github.token}}
 
     - name: Put a link to the issue in the workflow output.
-      if: env.continue == 'true' && env.lychee_exit_code != 0
+      if: env.continue == 'true'
       env:
         issue-number: ${{steps.create-issue.outputs.issue-number}}
       shell: bash
@@ -230,7 +232,7 @@ runs:
         echo "Ticket [#${{env.issue-number}}](https://github.com/${{github.repository}}/issues/${{env.issue-number}}) has been created." >> $GITHUB_STEP_SUMMARY
 
     - name: Report if checks were successful.
-      if: env.continue == 'true' && env.lychee_exit_code == 0
+      if: env.continue == 'true'
       shell: bash
       run: |
           echo "No bad links found in the files matched by this pattern:" >> $GITHUB_STEP_SUMMARY
