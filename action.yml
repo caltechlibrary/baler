@@ -23,6 +23,11 @@ inputs:
     default: 'bug'
     required: false
     type: string
+  lookback:
+    description: "How many previous issues to check for duplicate reports."
+    default: 5
+    required: false
+    type: number
   debug:
     description: "Run in debug mode."
     default: false
@@ -116,8 +121,12 @@ runs:
           echo "Continuing workflow."
           echo "continue=true" >> $GITHUB_ENV
         else
-          echo "Link testing **skipped** because the relevant files were not changed." >> $GITHUB_STEP_SUMMARY
-          echo "The files tested were the following:<code>${{inputs.files}}</code>" >> $GITHUB_STEP_SUMMARY
+          message="## Files are unchanged
+          Link testing was **skipped** because the relevant files have not
+          changed. The files that were considered are the following:
+          <code>${{inputs.files}}</code>"
+
+          echo "$message" >> $GITHUB_STEP_SUMMARY
           echo "continue=false" >> $GITHUB_ENV
         fi
 
@@ -187,8 +196,7 @@ runs:
       run: |
         lychee_tmp="$(mktemp)"
         changed_files=${{env.considered}}
-        workflow="https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}?check_suite_focus=true"
-        lychee --config ${{env.lychee_config}} --output $lychee_tmp --format markdown ${changed_files[@]}
+        lychee -c ${{env.lychee_config}} -o $lychee_tmp -f markdown ${changed_files[@]}
         exit_code=$?
         echo "lychee_exit_code=$exit_code" >> $GITHUB_ENV
         if [[ $exit_code == 2 ]]; then
@@ -201,15 +209,56 @@ runs:
               -e 's/\(.*\)\[\(.*\)\]\(.*\)/\1[`\2`]\3/' \
               < $lychee_tmp > ${{env.lychee_output}}
           echo >> ${{env.lychee_output}}
-          echo "This content was produced by a [GitHub Action]($workflow)." >> ${{env.lychee_output}}
+          endpoint="https://github.com/${GITHUB_REPOSITORY}/actions/runs"
+          workflow="$endpoint/${GITHUB_RUN_ID}?check_suite_focus=true"
+          echo -n "This content was produced by a " >> ${{env.lychee_output}}
+          echo "[GitHub Action]($workflow)."        >> ${{env.lychee_output}}
         elif [[ $exit_code == 1 || $exit_code == 3 ]]; then
-          echo "## Bad link reporter encountered an exception" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "This was most likely caused by a bug in Baler." >> $GITHUB_STEP_SUMMARY
-          echo "Please report this to the developers." >> $GITHUB_STEP_SUMMARY
-          # Set continue to false to abort the rest of the workflow.
+          message="## Run-time error
+          Baler encountered an exception. This was most likely caused by a
+          bug in Baler itself. Please report this to the developers. You can
+          report it by opening an issue in the GitHub repository at
+          <https://github.com/caltechlibrary/baler>."
+
+          echo "$message" >> $GITHUB_STEP_SUMMARY
           echo "continue=false" >> $GITHUB_ENV
         fi
+
+    - name: Check if we've already opened a duplicate issue.
+      if: env.continue == 'true'
+      shell: bash
+      run: |
+        sed_cmd='s/\\(.*\\)This content was produced by.*/\\1/'
+        # Save a version of the current issue body, to use for comparisons.
+        # Strip the end of the body b/c it has this workflow's unique run
+        # id, which can never match any other issue. Also, sort the body;
+        # this is a way to normalize the contents to avoid false positives
+        # when, e.g., two runs end up putting URLs in different orders.
+        current=$(sed $sed_cmd < ${{env.lychee_output}} | sort)
+        # Get the issue numbers for the last N issues, where N = lookback.
+        accept="Accept: application/vnd.github+json"
+        auth="Authorization: Bearer ${{github.token}}"
+        issues_endpoint="https://api.github.com/repos/${{github.repository}}/issues"
+        url="$issues_endpoint?q=state:all&per_page=${{inputs.lookback}}"
+        issues=$(curl -s -H $accept -H $auth $url)
+        issue_numbers=$(jq '.[]number' <<<"$issues")
+        # Iterate over the issues & compare the bodies.
+        for number in issue_numbers; do
+          previous=$(curl -s -H $accept -H $auth $issues_endpoint/$number | jq '.body')
+          previous=$(echo "$previous" | sed $sed_cmd | sort)
+          if [[ "$current" == $previous" ]]; then
+            # Report that we found a match, and stop execution.
+            link="https://github.com/${{github.repository}}/issues/$number"
+            message="## Invalid URL(s) previously reported
+            One or more invalid URL(s) have been found; however, no new issue
+            has been opened in the repository because the same invalid URL(s)
+            were previously reported in [issue \#$number]($link)."
+
+            echo "$message" >> $GITHUB_STEP_SUMMARY
+            echo "continue=false" >> $GITHUB_ENV
+            break
+          fi
+        done
 
     - name: Open a new issue/ticket to report the problems.
       if: env.continue == 'true'
@@ -227,16 +276,20 @@ runs:
         issue-number: ${{steps.create-issue.outputs.issue-number}}
       shell: bash
       run: |
-        echo "## Invalid URLs found" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Ticket [#${{env.issue-number}}](https://github.com/${{github.repository}}/issues/${{env.issue-number}}) has been created." >> $GITHUB_STEP_SUMMARY
+        number="${{env.issue-number}}"
+        link="https://github.com/${{github.repository}}/issues/$number"
+        message="## Invalid URLs found
+        Ticket [#${{env.issue-number}}]($link) has been created."
+        echo "$message" >> $GITHUB_STEP_SUMMARY
 
     - name: Report if checks were successful.
       if: env.continue == 'true'
       shell: bash
       run: |
-          echo "No bad links found in the files matched by this pattern:" >> $GITHUB_STEP_SUMMARY
-          echo "<code>${{inputs.files}}</code>" >> $GITHUB_STEP_SUMMARY
+        message="## No invalid URLs found
+        No bad links were found in the files matched by this pattern:
+        <code>${{inputs.files}}</code>"
+        echo "$message" >> $GITHUB_STEP_SUMMARY
 
     - name: Log internal variable values, in case they're needed for debugging.
       shell: bash
