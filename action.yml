@@ -243,7 +243,7 @@ runs:
         issues=$(curl -s -H $accept -H $auth $url)
         issue_numbers=$(jq '.[]number' <<<"$issues")
         # Iterate over the issues & compare the bodies.
-        for number in issue_numbers; do
+        for number in $issue_numbers; do
           previous=$(curl -s -H $accept -H $auth $issues_endpoint/$number | jq '.body')
           previous=$(echo "$previous" | sed $sed_cmd | sort)
           if [[ "$current" == $previous" ]]; then
