@@ -228,24 +228,24 @@ runs:
       if: env.continue == 'true'
       shell: bash
       run: |
-        sed_cmd='s/\\(.*\\)This content was produced by.*/\\1/'
+        sed_cmd='s/\(.*\)This content was produced by.*/\1/'
         # Save a version of the current issue body, to use for comparisons.
         # Strip the end of the body b/c it has this workflow's unique run
         # id, which can never match any other issue. Also, sort the body;
         # this is a way to normalize the contents to avoid false positives
         # when, e.g., two runs end up putting URLs in different orders.
-        current=$(sed $sed_cmd < ${{env.lychee_output}} | sort)
+        current=$(sed "$sed_cmd" < ${{env.lychee_output}} | sort)
         # Get the issue numbers for the last N issues, where N = lookback.
         accept="Accept: application/vnd.github+json"
         auth="Authorization: Bearer ${{github.token}}"
         issues_endpoint="https://api.github.com/repos/${{github.repository}}/issues"
         url="$issues_endpoint?q=state:all&per_page=${{inputs.lookback}}"
         issues=$(curl -s -H $accept -H $auth $url)
-        issue_numbers=$(jq '.[]number' <<<"$issues")
+        issue_numbers=($(jq '.[]number' <<<"$issues"))
         # Iterate over the issues & compare the bodies.
-        for number in $issue_numbers; do
+        for number in ${issue_numbers[@]}; do
           previous=$(curl -s -H $accept -H $auth $issues_endpoint/$number | jq '.body')
-          previous=$(echo "$previous" | sed $sed_cmd | sort)
+          previous=$(echo "$previous" | sed "$sed_cmd" | sort)
           if [[ "$current" == $previous" ]]; then
             # Report that we found a match, and stop execution.
             link="https://github.com/${{github.repository}}/issues/$number"
