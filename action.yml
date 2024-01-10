@@ -270,7 +270,7 @@ runs:
         done
 
     - name: Open a new issue/ticket to report the problems.
-      if: env.continue == 'true'
+      if: env.continue == 'true' && env.lychee_exit_code != 0
       id: create-issue
       uses: peter-evans/create-issue-from-file@v4
       with:
@@ -280,7 +280,7 @@ runs:
         token: ${{github.token}}
 
     - name: Put a link to the issue in the workflow output.
-      if: env.continue == 'true'
+      if: env.continue == 'true' && env.lychee_exit_code != 0
       env:
         issue-number: ${{steps.create-issue.outputs.issue-number}}
       shell: bash
@@ -292,7 +292,7 @@ runs:
         echo "$message" >> $GITHUB_STEP_SUMMARY
 
     - name: Report if checks were successful.
-      if: env.continue == 'true'
+      if: env.continue == 'true' && env.lychee_exit_code == 0
       shell: bash
       run: |
         message="## No invalid URLs found
