@@ -178,6 +178,7 @@ runs:
         exclude_all_private = true
         insecure = true
         EOF
+        cat $lychee_config
         # Set variables used in later steps.
         echo "lychee_config=$lychee_config" >> $GITHUB_ENV
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
