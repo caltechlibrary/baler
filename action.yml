@@ -1,11 +1,11 @@
-# GitHub Action definition file for Baler – the Bad Link Reporter.
+# Summary: GitHub Action definition file for Baler – the Bad Link Reporter.
 #
 # Copyright 2024 California Institute of Technology.
 # License: Modified BSD 3-clause – see file "LICENSE" in the project website.
 # Website: https://github.com/caltechlibrary/baler
 
 name: "Baler – BAd Link reportER"
-description: "Test links in repo files and file issues for problems found"
+description: "Test URLs in Markdown files and open an issue if problems found"
 
 inputs:
   files:
@@ -36,11 +36,11 @@ inputs:
 
   # Internal parameters.
   lyVersion:
-    description: "Version of lychee link checker program"
+    description: "Version of lychee link checker program."
     default: 0.13.0
     required: false
   lyDownloadBase:
-    description: "Base download URL for Lychee binaries"
+    description: "Base download URL for Lychee binaries."
     default: 'https://github.com/lycheeverse/lychee/releases/download'
     required: false
 
@@ -121,12 +121,16 @@ runs:
           echo "Continuing workflow."
           echo "continue=true" >> $GITHUB_ENV
         else
-          message="## Files are unchanged
-          Link testing was **skipped** because the relevant files have not
-          changed. The files that were considered are the following:
-          <code>${{inputs.files}}</code>"
+          echo "Stopping workflow."
 
-          echo "$message" >> $GITHUB_STEP_SUMMARY
+          # Report that we have nothing to do.
+          msg="<h2>Relevant files are unchanged – nothing to do</h2>
+          <p>Link testing was <strong>skipped</strong> because the relevant
+          files have not changed. The files that were considered are the
+          following:<br><code>${{inputs.files}}</code>.</p>"
+          echo "$msg" >> $GITHUB_STEP_SUMMARY
+
+          # Skip the rest of the workflow.
           echo "continue=false" >> $GITHUB_ENV
         fi
 
@@ -165,6 +169,10 @@ runs:
           retry_wait_time=30
         fi
         # Create configuration file for lychee.
+        # Note: the name "max_retries" implies that it controls how many times
+        # a URL is tested AFTER an initial failure (that's the meaning of
+        # "retry", after all). However, I looked at the lychee code, and in
+        # fact, max_retries is the total number of times it tests the URL.
         lychee_config=.git/lychee.toml
         cat <<EOF > $lychee_config
         scheme = ["https", "http"]
@@ -172,13 +180,12 @@ runs:
         no_progress = true
         timeout = $timeout
         retry_wait_time = $retry_wait_time
-        max_retries = 3
+        max_retries = 2
         include_mail = false
         include_verbatim = true
         exclude_all_private = true
         insecure = true
         EOF
-        cat $lychee_config
         # Set variables used in later steps.
         echo "lychee_config=$lychee_config" >> $GITHUB_ENV
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
@@ -220,16 +227,19 @@ runs:
           echo >> ${{env.lychee_output}}
           endpoint="https://github.com/${GITHUB_REPOSITORY}/actions/runs"
           workflow="$endpoint/${GITHUB_RUN_ID}?check_suite_focus=true"
-          echo -n "This content was produced by a " >> ${{env.lychee_output}}
-          echo "[GitHub Action]($workflow)."        >> ${{env.lychee_output}}
+          note="This content was produced by a [GitHub Action]($workflow)."
+          echo "$note" >> ${{env.lychee_output}}
         elif [[ $exit_code == 1 || $exit_code == 3 ]]; then
-          message="## Run-time error
-          Baler encountered an exception. This was most likely caused by a
+          # Inform the user.
+          msg="<h2>Run-time error</h2>
+          <p>Baler encountered an exception. This was most likely caused by a
           bug in Baler itself. Please report this to the developers. You can
           report it by opening an issue in the GitHub repository at
-          <https://github.com/caltechlibrary/baler>."
+          <a href=\"https://github.com/caltechlibrary/baler\">
+          https://github.com/caltechlibrary/baler</a>.</p>"
+          echo "$msg" >> $GITHUB_STEP_SUMMARY
 
-          echo "$message" >> $GITHUB_STEP_SUMMARY
+          # Skip the rest of the workflow.
           echo "continue=false" >> $GITHUB_ENV
         fi
 
@@ -237,33 +247,35 @@ runs:
       if: env.continue == 'true'
       shell: bash
       run: |
-        sed_cmd='s/\(.*\)This content was produced by.*/\1/'
-        # Save a version of the current issue body, to use for comparisons.
+        # First, save the current issue text body, to use for comparisons.
         # Strip the end of the body b/c it has this workflow's unique run
         # id, which can never match any other issue. Also, sort the body;
         # this is a way to normalize the contents to avoid false positives
         # when, e.g., two runs end up putting URLs in different orders.
+        sed_cmd='s/\(.*\)This content was produced by.*/\1/'
         current=$(sed "$sed_cmd" < ${{env.lychee_output}} | sort)
         # Get the issue numbers for the last N issues, where N = lookback.
+        endpoint="https://api.github.com/repos/${{github.repository}}/issues"
+        query="q=state:open&per_page=${{inputs.lookback}}"
         accept="Accept: application/vnd.github+json"
         auth="Authorization: Bearer ${{github.token}}"
-        endpoint="https://api.github.com/repos/${{github.repository}}/issues"
-        url="$endpoint?q=state:all&per_page=${{inputs.lookback}}"
-        issues=$(curl -s -H "$accept" -H "$auth" "$url")
+        issues=$(curl -s -H "$accept" -H "$auth" "$endpoint?$query")
         issue_numbers=($(jq '.[].number' <<<"$issues"))
         # Iterate over the issues & compare the bodies.
         for number in ${issue_numbers[@]}; do
-          previous=$(curl -s -H "$accept" -H "$auth" "$endpoint/$number" | jq '.body')
-          previous=$(echo "$previous" | sed "$sed_cmd" | sort)
+          previous=$(curl -s -H "$accept" -H "$auth" "$endpoint/$number" | jq -r '.body')
+          previous=$(echo "$previous" | sed 's/\\n/\n/g' | sed "$sed_cmd" | sort)
           if [[ "$current" == "$previous" ]]; then
-            # Report that we found a match, and stop execution.
             link="https://github.com/${{github.repository}}/issues/$number"
-            message="## Invalid URL(s) previously reported
-            One or more invalid URL(s) have been found; however, no new issue
-            has been opened in the repository because the same invalid URL(s)
-            were previously reported in [issue \#$number]($link)."
 
-            echo "$message" >> $GITHUB_STEP_SUMMARY
+            # Report that we found a match.
+            msg="<h2>Bad links found, but issue creation skipped</h2>
+            <p>One or more invalid URL(s) have been found; however, no new
+            issue has been opened in the repository because the same URL(s)
+            were reported in <a href=\"$link\">issue #$number</a>.<p>"
+            echo "$msg" >> $GITHUB_STEP_SUMMARY
+
+            # Skip the rest of the workflow.
             echo "continue=false" >> $GITHUB_ENV
             break
           fi
@@ -287,20 +299,22 @@ runs:
       run: |
         number="${{env.issue-number}}"
         link="https://github.com/${{github.repository}}/issues/$number"
-        message="## Invalid URLs found
-        Ticket [#${{env.issue-number}}]($link) has been created."
-        echo "$message" >> $GITHUB_STEP_SUMMARY
+        msg="<h2>Invalid URLs found</h2>
+        <p>Ticket <a href=\"$link\">#${{env.issue-number}}</a> has been
+        created.</p>"
+        echo "$msg" >> $GITHUB_STEP_SUMMARY
 
     - name: Report if checks were successful.
       if: env.continue == 'true' && env.lychee_exit_code == 0
       shell: bash
       run: |
-        message="## No invalid URLs found
-        No bad links were found in the files matched by this pattern:
-        <code>${{inputs.files}}</code>"
-        echo "$message" >> $GITHUB_STEP_SUMMARY
+        msg="<h2>No invalid URLs found
+        <p>No bad links were found in the files matched by this pattern:<br>
+        <code>${{inputs.files}}</code></p>"
+        echo "msg" >> $GITHUB_STEP_SUMMARY
 
-    - name: Log internal variable values, in case they're needed for debugging.
+    - name: Log internal variable values in debug mode.
+      if: inputs.debug == 'true'
       shell: bash
       run: |
         echo "Summary of run-time variables"
@@ -311,6 +325,8 @@ runs:
         echo "files: ${{inputs.files}}"
         echo "ignore: ${{inputs.ignore}}"
         echo "labels: ${{inputs.labels}}"
+        echo "lookback: ${{inputs.lookback}}"
+        echo "debug: ${{inputs.debug}}"
         echo "depth_needed (for git history) = ${{env.depth_needed}}"
         echo "files considered = ${{env.considered}}"
         echo "continue = ${{env.continue}}"
@@ -320,5 +336,5 @@ runs:
 
 author: "Michael Hucka -- https://github.com/mhucka"
 branding:
-  icon: cloud-off
+  icon: thumbs-down
   color: orange
