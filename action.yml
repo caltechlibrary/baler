@@ -240,11 +240,11 @@ runs:
         auth="Authorization: Bearer ${{github.token}}"
         issues_endpoint="https://api.github.com/repos/${{github.repository}}/issues"
         url="$issues_endpoint?q=state:all&per_page=${{inputs.lookback}}"
-        issues=$(curl -s -H $accept -H $auth $url)
-        issue_numbers=($(jq '.[]number' <<<"$issues"))
+        issues=$(curl -s -H "$accept" -H "$auth" "$url")
+        issue_numbers=($(jq '.[].number' <<<"$issues"))
         # Iterate over the issues & compare the bodies.
         for number in ${issue_numbers[@]}; do
-          previous=$(curl -s -H $accept -H $auth $issues_endpoint/$number | jq '.body')
+          previous=$(curl -s -H "$accept" -H "$auth" "$issues_endpoint/$number" | jq '.body')
           previous=$(echo "$previous" | sed "$sed_cmd" | sort)
           if [[ "$current" == $previous" ]]; then
             # Report that we found a match, and stop execution.
