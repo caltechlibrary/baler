@@ -156,14 +156,22 @@ runs:
         else
           echo "File of URLs to ignore does not exist: ${{env.ignore}}"
         fi
+        # If debug is on, shorten timeouts.
+        if [[ "${{inputs.debug}}" == "true" ]]; then
+          timeout=1
+          retry_wait_time=1
+        else
+          timeout=30
+          retry_wait_time=30
+        fi
         # Create configuration file for lychee.
         lychee_config=.git/lychee.toml
         cat <<EOF > ${lychee_config}
         scheme = ["https", "http"]
         cache = false
         no_progress = true
-        timeout = 30
-        retry_wait_time = 30
+        timeout = ${timeout}
+        retry_wait_time = ${retry_wait_time}
         max_retries = 3
         include_mail = false
         include_verbatim = true
@@ -238,13 +246,13 @@ runs:
         # Get the issue numbers for the last N issues, where N = lookback.
         accept="Accept: application/vnd.github+json"
         auth="Authorization: Bearer ${{github.token}}"
-        issues_endpoint="https://api.github.com/repos/${{github.repository}}/issues"
-        url="$issues_endpoint?q=state:all&per_page=${{inputs.lookback}}"
+        endpoint="https://api.github.com/repos/${{github.repository}}/issues"
+        url="$endpoint?q=state:all&per_page=${{inputs.lookback}}"
         issues=$(curl -s -H "$accept" -H "$auth" "$url")
         issue_numbers=($(jq '.[].number' <<<"$issues"))
         # Iterate over the issues & compare the bodies.
         for number in ${issue_numbers[@]}; do
-          previous=$(curl -s -H "$accept" -H "$auth" "$issues_endpoint/$number" | jq '.body')
+          previous=$(curl -s -H "$accept" -H "$auth" "$endpoint/$number" | jq '.body')
           previous=$(echo "$previous" | sed "$sed_cmd" | sort)
           if [[ "$current" == $previous" ]]; then
             # Report that we found a match, and stop execution.
