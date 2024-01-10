@@ -166,12 +166,12 @@ runs:
         fi
         # Create configuration file for lychee.
         lychee_config=.git/lychee.toml
-        cat <<EOF > ${lychee_config}
+        cat <<EOF > $lychee_config
         scheme = ["https", "http"]
         cache = false
         no_progress = true
-        timeout = ${timeout}
-        retry_wait_time = ${retry_wait_time}
+        timeout = $timeout
+        retry_wait_time = $retry_wait_time
         max_retries = 3
         include_mail = false
         include_verbatim = true
@@ -179,7 +179,7 @@ runs:
         insecure = true
         EOF
         # Set variables used in later steps.
-        echo "lychee_config=${lychee_config}" >> $GITHUB_ENV
+        echo "lychee_config=$lychee_config" >> $GITHUB_ENV
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
 
     # Implementation notes:
@@ -254,7 +254,7 @@ runs:
         for number in ${issue_numbers[@]}; do
           previous=$(curl -s -H "$accept" -H "$auth" "$endpoint/$number" | jq '.body')
           previous=$(echo "$previous" | sed "$sed_cmd" | sort)
-          if [[ "$current" == $previous" ]]; then
+          if [[ "$current" == "$previous" ]]; then
             # Report that we found a match, and stop execution.
             link="https://github.com/${{github.repository}}/issues/$number"
             message="## Invalid URL(s) previously reported
