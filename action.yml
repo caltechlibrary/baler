@@ -8,6 +8,9 @@ name: "Baler – BAd Link reportER"
 description: "Test URLs in Markdown files and open an issue if problems found"
 
 inputs:
+
+  # User-level parameters.
+
   files:
     description: "Regexes for files to test. Can be comma-separated list."
     default: '*.md'
@@ -28,6 +31,14 @@ inputs:
     default: 5
     required: false
     type: number
+  timeout:
+    description: "Number of seconds to wait on unresponsive URL."
+    default: 15
+    required: false
+    type: number
+
+  # Advanced parameters.
+
   debug:
     description: "Run in debug mode."
     default: false
@@ -35,6 +46,7 @@ inputs:
     type: boolean
 
   # Internal parameters.
+
   lyVersion:
     description: "Version of lychee link checker program."
     default: 0.13.0
@@ -165,8 +177,8 @@ runs:
           timeout=1
           retry_wait_time=1
         else
-          timeout=30
-          retry_wait_time=30
+          timeout=${{env.timeout}}
+          retry_wait_time=10
         fi
         # Create configuration file for lychee.
         # Note: the name "max_retries" implies that it controls how many times
