@@ -49,7 +49,7 @@ inputs:
 
   lyVersion:
     description: "Version of lychee link checker program."
-    default: 0.13.0
+    default: 0.14.1
     required: false
   lyDownloadBase:
     description: "Base download URL for Lychee binaries."
@@ -188,7 +188,7 @@ runs:
         lychee_config=.git/lychee.toml
         cat <<EOF > $lychee_config
         scheme = ["https", "http"]
-        accept = ["200..=204", "429"]
+        accept = [200, 201, 202, 203, 204, 206, 302, 429]
         timeout = $timeout
         retry_wait_time = $retry_wait_time
         max_retries = 2
@@ -200,6 +200,9 @@ runs:
         no_progress = true
         cache = false
         EOF
+        echo "~~~~~~~~~~~~~~~~~~~"
+        cat ${lychee_config}
+        echo "~~~~~~~~~~~~~~~~~~~"
         # Set variables used in later steps.
         echo "lychee_config=$lychee_config" >> $GITHUB_ENV
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
