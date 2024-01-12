@@ -257,7 +257,7 @@ runs:
           https://github.com/caltechlibrary/baler</a>.</p>"
           echo "$msg" >> $GITHUB_STEP_SUMMARY
           # Bail with an error.
-          exit 1
+          exit 2
         fi
 
     - name: Check if we've already opened a duplicate issue.
@@ -320,20 +320,11 @@ runs:
         <p>Ticket <a href=\"$link\">#${{env.issue-number}}</a> has been
         created.</p>"
         echo "$msg" >> $GITHUB_STEP_SUMMARY
-        gh run cancel ${{github.run_id}}
-        gh run watch ${{github.run_id}}
-
-    - name: Report if checks were successful.
-      if: env.continue == 'true' && env.lychee_exit_code == 0
-      shell: bash
-      run: |
-        msg="<h2>No invalid URLs found
-        <p>No bad links were found in the files matched by this pattern:<br>
-        <code>${{inputs.files}}</code></p>"
-        echo "msg" >> $GITHUB_STEP_SUMMARY
+        # Report a failure.
+        exit 1
 
     - name: Log internal variable values in debug mode.
-      if: inputs.debug == 'true'
+      if: inputs.debug == 'true' || failure()
       shell: bash
       run: |
         echo "Summary of run-time variables"
@@ -355,6 +346,15 @@ runs:
         echo "============================="
         cat ${lychee_config}
         echo "============================="
+
+    - name: Report if checks were successful.
+      if: env.continue == 'true' && env.lychee_exit_code == 0
+      shell: bash
+      run: |
+        msg="<h2>No invalid URLs found
+        <p>No bad links were found in the files matched by this pattern:<br>
+        <code>${{inputs.files}}</code></p>"
+        echo "msg" >> $GITHUB_STEP_SUMMARY
 
 
 author: "Michael Hucka -- https://github.com/mhucka"
