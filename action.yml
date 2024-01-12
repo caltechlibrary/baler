@@ -188,15 +188,17 @@ runs:
         lychee_config=.git/lychee.toml
         cat <<EOF > $lychee_config
         scheme = ["https", "http"]
-        cache = false
-        no_progress = true
+        accept = ["200..=204", "429"]
         timeout = $timeout
         retry_wait_time = $retry_wait_time
         max_retries = 2
+        insecure = true
+        skip_missing = true
         include_mail = false
         include_verbatim = true
         exclude_all_private = true
-        insecure = true
+        no_progress = true
+        cache = false
         EOF
         # Set variables used in later steps.
         echo "lychee_config=$lychee_config" >> $GITHUB_ENV
