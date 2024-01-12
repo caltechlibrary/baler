@@ -55,6 +55,10 @@ inputs:
     description: "Base download URL for Lychee binaries."
     default: 'https://github.com/lycheeverse/lychee/releases/download'
     required: false
+  lyRetryWaitTime:
+    description: "Time to wait between retries, in seconds."
+    default: 10
+    required: false
 
 # Explanation for how different GitHub events are handled, and why:
 #
@@ -177,8 +181,8 @@ runs:
           timeout=1
           retry_wait_time=1
         else
-          timeout=${{env.timeout}}
-          retry_wait_time=10
+          timeout=${{inputs.timeout}}
+          retry_wait_time=${{inputs.lyRetryWaitTime}}
         fi
         # Create configuration file for lychee.
         # Note: the name "max_retries" implies that it controls how many times
