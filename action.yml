@@ -257,8 +257,8 @@ runs:
           https://github.com/caltechlibrary/baler</a>.</p>"
           echo "$msg" >> $GITHUB_STEP_SUMMARY
 
-          # Skip the rest of the workflow.
-          echo "continue=false" >> $GITHUB_ENV
+          # Bail with an error.
+          exit 1
         fi
 
     - name: Check if we've already opened a duplicate issue.
