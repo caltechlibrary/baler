@@ -256,7 +256,6 @@ runs:
           <a href=\"https://github.com/caltechlibrary/baler\">
           https://github.com/caltechlibrary/baler</a>.</p>"
           echo "$msg" >> $GITHUB_STEP_SUMMARY
-
           # Bail with an error.
           exit 1
         fi
@@ -321,6 +320,8 @@ runs:
         <p>Ticket <a href=\"$link\">#${{env.issue-number}}</a> has been
         created.</p>"
         echo "$msg" >> $GITHUB_STEP_SUMMARY
+        gh run cancel ${{github.run_id}}
+        gh run watch ${{github.run_id}}
 
     - name: Report if checks were successful.
       if: env.continue == 'true' && env.lychee_exit_code == 0
