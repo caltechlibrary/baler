@@ -200,9 +200,6 @@ runs:
         no_progress = true
         cache = false
         EOF
-        echo "~~~~~~~~~~~~~~~~~~~"
-        cat ${lychee_config}
-        echo "~~~~~~~~~~~~~~~~~~~"
         # Set variables used in later steps.
         echo "lychee_config=$lychee_config" >> $GITHUB_ENV
         echo "lychee_output=.git/lychee-report.md" >> $GITHUB_ENV
@@ -348,6 +345,10 @@ runs:
         echo "files considered = ${{env.considered}}"
         echo "continue = ${{env.continue}}"
         echo "env.lychee_exit_code = ${{env.lychee_exit_code}}"
+        echo ""
+        echo "Content of lychee config file"
+        echo "============================="
+        cat ${lychee_config}
         echo "============================="
 
 
