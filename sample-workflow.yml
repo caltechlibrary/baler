@@ -23,19 +23,18 @@ env:
   ignore: '.github/workflows/ignored-urls.txt'
 
 on:
-  schedule:
-    # Syntax is: "minute  hour  day-of-month  month  day-of-week"
-    - cron: "00 04 * * *"
-  pull_request:
+  schedule:  # Cron syntax is: "min hr day-of-month month day-of-week"
+    - cron: "00 04 * * 1"
+  push:
     paths: ['**.md']
   workflow_dispatch:
 
 # The rest of this file should be left as-is ─────────────────────────
 
-run-name: Test links in files
+run-name: Test links in Markdown files
 jobs:
-  run-baler:
-    name: Run Bad Link Reporter
+  Baler:
+    name: Link checker and reporter
     runs-on: ubuntu-latest
     permissions:
       issues: write
