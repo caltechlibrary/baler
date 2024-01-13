@@ -1,7 +1,8 @@
-# @file    Makefile
-# @date    2023-12-12
-# @license Please see the file named LICENSE in the project directory
-# @website https://github.com/caltechlibrary/baler
+# Makefile for developing and releasing Baler.
+#
+# Copyright 2024 California Institute of Technology.
+# License: Modified BSD 3-clause – see file "LICENSE" in the project website.
+# Website: https://github.com/caltechlibrary/baler
 #
 # ╭───────────────────────────── Important notes ─────────────────────────────╮
 # │ Run "make" or "make help" to get a list of commands in this makefile.     │
