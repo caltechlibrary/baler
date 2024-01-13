@@ -9,43 +9,43 @@
   "dateCreated": "2023-12-11",
   "author": [
     {
-    "@type": "Person",
-    "givenName": "Michael",
-    "familyName": "Hucka",
-    "affiliation": {
-      "@type": "Organization",
-      "name": "California Institute of Technology Library"
-    },
-    "email": "mhucka@caltech.edu",
-    "@id": "https://orcid.org/0000-0001-9105-5960"
-  }
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Hucka",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "California Institute of Technology Library"
+      },
+      "email": "mhucka@caltech.edu",
+      "@id": "https://orcid.org/0000-0001-9105-5960"
+    }
   ],
   "maintainer": [
     {
-    "@type": "Person",
-    "givenName": "Michael",
-    "familyName": "Hucka",
-    "affiliation": {
-      "@type": "Organization",
-      "name": "California Institute of Technology Library"
-    },
-    "email": "mhucka@caltech.edu",
-    "@id": "https://orcid.org/0000-0001-9105-5960"
-  }
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Hucka",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "California Institute of Technology Library"
+      },
+      "email": "mhucka@caltech.edu",
+      "@id": "https://orcid.org/0000-0001-9105-5960"
+    }
   ],
-  "funder": { 
+  "funder": {
     "@id": "https://ror.org/05dxps055",
     "@type": "Organization",
     "name": "California Institute of Technology Library"
   },
   "copyrightHolder": [
     {
-    "@id": "https://ror.org/05dxps055",
-    "@type": "Organization",
-    "name": "California Institute of Technology"
-  }
+      "@id": "https://ror.org/05dxps055",
+      "@type": "Organization",
+      "name": "California Institute of Technology"
+    }
   ],
-  "copyrightYear": 2023,
+  "copyrightYear": 2024,
   "license": "https://github.com/caltechlibrary/baler/blob/main/LICENSE",
   "isAccessibleForFree": true,
   "url": "https://caltechlibrary.github.io/baler",
