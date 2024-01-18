@@ -1,12 +1,7 @@
 # Makefile for developing and releasing Baler.
+# Run "make" or "make help" to get a list of commands in this makefile.
 #
-# Copyright 2024 California Institute of Technology.
-# License: Modified BSD 3-clause – see file "LICENSE" in the project website.
-# Website: https://github.com/caltechlibrary/baler
-#
-# ╭───────────────────────────── Important notes ─────────────────────────────╮
-# │ Run "make" or "make help" to get a list of commands in this makefile.     │
-# │                                                                           │
+# ╭──────────────────────── Notice ── Notice ── Notice ───────────────────────╮
 # │ The codemeta.json file is considered the master source for version and    │
 # │ other info. Information is pulled out of codemeta.json to update other    │
 # │ files like setup.cfg, the README, and others. Maintainers should update   │
@@ -22,6 +17,10 @@
 # │ release in RDM (because given any release, RDM can be queried for the     │
 # │ latest one) and we don't have to hardwire URLs or id's in this makefile.  │
 # ╰───────────────────────────────────────────────────────────────────────────╯
+#
+# Copyright 2024 California Institute of Technology.
+# License: Modified BSD 3-clause – see file "LICENSE" in the project website.
+# Website: https://github.com/caltechlibrary/baler
 
 SHELL=/bin/bash
 .ONESHELL:                              # Run all commands in the same shell.
@@ -106,33 +105,36 @@ endef
 # These variables take longer to compute, and for some actions like "make help"
 # they are unnecessary and annoying to wait for.
 vars:;
-	$(eval url     := $(strip $(shell jq -r .url codemeta.json)))
-	$(eval license := $(strip $(shell jq -r .license codemeta.json)))
-	$(eval desc    := $(strip $(shell jq -r .description codemeta.json)))
-	$(eval author  := \
+	$(eval url	:= $(strip $(shell jq -r .url codemeta.json)))
+	$(eval url	:= $(or $(url),$(repo_url)))
+	$(eval license	:= $(strip $(shell jq -r .license codemeta.json)))
+	$(eval desc	:= $(strip $(shell jq -r .description codemeta.json)))
+	$(eval author	:= \
 	  $(strip $(shell jq -r '.author[0].givenName + " " + .author[0].familyName' codemeta.json)))
-	$(eval email   := $(strip $(shell jq -r .author[0].email codemeta.json)))
-	$(eval related := \
+	$(eval email	:= $(strip $(shell jq -r .author[0].email codemeta.json)))
+	$(eval related	:= \
 	  $(strip $(shell jq -r '.relatedLink | if type == "array" then .[0] else . end' codemeta.json)))
-	$(eval rdm_url	  := $(shell cut -d'/' -f 1-3 <<< $(related)))
-	$(eval current_id := $(shell sed -r 's|.*/(.*)$$|\1|' <<< $(related)))
-	$(eval vers_url	  := $(rdm_url)/api/records/$(current_id)/versions)
-	$(eval latest_doi := $(shell curl -s $(vers_url) | jq -r .hits.hits[0].pids.doi.identifier))
+	$(eval rdm_url	:= $(shell cut -d'/' -f 1-3 <<< $(related)))
+	$(eval rdm_id	:= $(shell sed -r 's|.*/(.*)$$|\1|' <<< $(related)))
+	$(eval vers_url := $(rdm_url)/api/records/$(rdm_id)/versions)
+	$(eval rdm_doi	:= $(shell curl -s $(vers_url) | jq -r .hits.hits[0].pids.doi.identifier))
 
 #: Print variables set in this Makefile from various sources.
+.SILENT: report
 report: vars
-	@echo "$(color)name$(reset)	  = $(name)"	   | expand -t 20
-	@echo "$(color)progname$(reset)   = $(progname)"   | expand -t 20
-	@echo "$(color)desc$(reset)	  = $(desc)"	   | expand -t 20
-	@echo "$(color)version$(reset)	  = $(version)"	   | expand -t 20
-	@echo "$(color)author$(reset)	  = $(author)"	   | expand -t 20
-	@echo "$(color)email$(reset)	  = $(email)"	   | expand -t 20
-	@echo "$(color)license$(reset)	  = $(license)"	   | expand -t 20
-	@echo "$(color)main url$(reset)   = $(url)"	   | expand -t 20
-	@echo "$(color)repo url$(reset)   = $(repo_url)"   | expand -t 20
-	@echo "$(color)branch$(reset)	  = $(branch)"	   | expand -t 20
-	@echo "$(color)current_id$(reset) = $(current_id)" | expand -t 20
-	@echo "$(color)latest_doi$(reset) = $(latest_doi)" | expand -t 20
+	echo "$(color)name$(reset)	 = $(name)"	  | expand -t 20
+	echo "$(color)progname$(reset)   = $(progname)"   | expand -t 20
+	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
+	echo "$(color)desc$(reset)	 = $(desc)"	  | expand -t 20
+	echo "$(color)version$(reset)	 = $(version)"	  | expand -t 20
+	echo "$(color)author$(reset)	 = $(author)"	  | expand -t 20
+	echo "$(color)email$(reset)	 = $(email)"	  | expand -t 20
+	echo "$(color)license$(reset)	 = $(license)"	  | expand -t 20
+	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
+	echo "$(color)repo url$(reset)   = $(repo_url)"   | expand -t 20
+	echo "$(color)branch$(reset)	 = $(branch)"	  | expand -t 20
+	echo "$(color)rdm_id$(reset)	 = $(rdm_id)"	  | expand -t 20
+	echo "$(color)rdm_doi$(reset)	 = $(rdm_doi)"	  | expand -t 20
 
 
 # make lint & make test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,7 +144,7 @@ lint:
 	markdownlint-cli2 *.md
 
 #: Run unit tests and coverage tests.
-tests:;
+test tests:;
 	$(error "There are no tests in this repo yet. They need to be added.")
 
 
@@ -170,7 +172,6 @@ update-all: update-meta update-citation update-example
 # Note that this doesn't replace "version" in codemeta.json, because that's the
 # variable from which this makefile gets its version number in the first place.
 update-meta:
-	@sed -i .bak -e '/"softwareVersion"/ s|: ".*"|: "$(version)"|' codemeta.json
 	@sed -i .bak -e '/"datePublished"/ s|: ".*"|: "$(today)"|' codemeta.json
 
 update-citation: vars
@@ -242,39 +243,6 @@ update-relatedlink: vars
 	git add codemeta.json
 	git diff-index --quiet HEAD codemeta.json || \
 	  (git commit -m"chore: update links" codemeta.json && git push -v --all)
-
-#: Create the distribution files for PyPI.
-packages: | clean
-	-mkdir -p $(builddir) $(distdir)
-	python3 setup.py sdist --dist-dir $(distdir)
-	python3 setup.py bdist_wheel --dist-dir $(distdir)
-	python3 -m twine check $(distdir)/$(progname)-$(version).tar.gz
-
-# Note: for the next action to work, the repository "testpypi" needs to be
-# defined in your ~/.pypirc file. Here is an example file:
-#
-#  [distutils]
-#  index-servers =
-#    pypi
-#    testpypi
-#
-#  [testpypi]
-#  repository = https://test.pypi.org/legacy/
-#  username = YourPyPIlogin
-#  password = YourPyPIpassword
-#
-# You could copy-paste the above to ~/.pypirc, substitute your user name and
-# password, and things should work after that. See the following for more info:
-# https://packaging.python.org/en/latest/specifications/pypirc/
-
-#: Upload distribution to test.pypi.org.
-test-pypi: packages
-	python3 -m twine upload --verbose --repository testpypi \
-	   $(distdir)/$(progname)-$(version)*.{whl,gz}
-
-#: Upload distribution to pypi.org.
-pypi: packages
-	python3 -m twine upload $(distdir)/$(progname)-$(version)*.{gz,whl}
 
 
 # Cleanup ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
