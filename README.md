@@ -3,6 +3,7 @@
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
 
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://github.com/caltechlibrary/baler/blob/main/LICENSE)
+![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&label=Actions&logoColor=white&style=flat-square)
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/baler.svg?color=b44e88&label=Release&style=flat-square)](https://github.com/caltechlibrary/baler/releases)
 [![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/h75w5-y7y57)](https://data.caltech.edu/records/h75w5-y7y57)
 
@@ -39,6 +40,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 1. In the main branch of your repository, create a `.github/workflows` directory if this directory does not already exist.
 2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into the file:
+
     ```yml
     # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.2.
     # This is available as the file "sample-workflow.yml" from the source
@@ -89,6 +91,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
               timeout:  ${{github.event.inputs.timeout  || env.timeout}}
               lookback: ${{github.event.inputs.lookback || env.lookback}}
     ```
+
 4. Save the file, add it to your git repository, and commit the changes.
 5. (If you did the steps above outside of GitHub) Push your repository changes to GitHub.
 
@@ -182,11 +185,12 @@ The image of a baler used at the top of this README file was obtained from [Wiki
 
 Numerous other broken link checkers similar to Baler can be found in GitHub. Some of them served as sources of ideas for what to do in Baler, and I want to acknowledge this debt. The following are notable programs that I looked at (and if you are the author of another one not listed here, please don't feel slighted – I probably missed it simply due to limited time, inadequate or incomplete search, or lack of serendipity):
 
-* [My Broken Link Checker](https://github.com/marketplace/actions/my-broken-link-checker)
 * [Broken Link Checker Action](https://github.com/marketplace/actions/broken-link-checker-action)
-* [Markdown link check](https://github.com/gaurav-nelson/github-action-markdown-link-check)
+* [GitHub Repo README.md Dead Link Finder](https://github.com/MrCull/GitHub-Repo-ReadMe-Dead-Link-Finder)
 * [linksnitch](https://github.com/marketplace/actions/linksnitch-action)
+* [Markdown link check](https://github.com/gaurav-nelson/github-action-markdown-link-check)
 * [md-links](https://github.com/raulingg/md-links)
+* [My Broken Link Checker](https://github.com/marketplace/actions/my-broken-link-checker)
 
 This work was funded by the California Institute of Technology Library.
 
