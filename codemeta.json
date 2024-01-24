@@ -1,60 +1,58 @@
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
-  "name": "Baler: BAd Link reportER",
+  "name": "Baler – BAd Link reportER",
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
-  "version": "0.0.2",
-  "datePublished": "2023-12-14",
+  "version": "1.0.0",
+  "datePublished": "2024-01-23",
   "dateCreated": "2023-12-11",
   "author": [
     {
-    "@type": "Person",
-    "givenName": "Michael",
-    "familyName": "Hucka",
-    "affiliation": {
-      "@type": "Organization",
-      "name": "California Institute of Technology Library"
-    },
-    "email": "mhucka@caltech.edu",
-    "@id": "https://orcid.org/0000-0001-9105-5960"
-  }
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Hucka",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "California Institute of Technology Library"
+      },
+      "email": "mhucka@caltech.edu",
+      "@id": "https://orcid.org/0000-0001-9105-5960"
+    }
   ],
   "maintainer": [
     {
-    "@type": "Person",
-    "givenName": "Michael",
-    "familyName": "Hucka",
-    "affiliation": {
-      "@type": "Organization",
-      "name": "California Institute of Technology Library"
-    },
-    "email": "mhucka@caltech.edu",
-    "@id": "https://orcid.org/0000-0001-9105-5960"
-  }
+      "@type": "Person",
+      "givenName": "Michael",
+      "familyName": "Hucka",
+      "affiliation": {
+        "@type": "Organization",
+        "name": "California Institute of Technology Library"
+      },
+      "email": "mhucka@caltech.edu",
+      "@id": "https://orcid.org/0000-0001-9105-5960"
+    }
   ],
-  "funder": { 
+  "funder": {
     "@id": "https://ror.org/05dxps055",
     "@type": "Organization",
     "name": "California Institute of Technology Library"
   },
   "copyrightHolder": [
     {
-    "@id": "https://ror.org/05dxps055",
-    "@type": "Organization",
-    "name": "California Institute of Technology"
-  }
+      "@id": "https://ror.org/05dxps055",
+      "@type": "Organization",
+      "name": "California Institute of Technology"
+    }
   ],
-  "copyrightYear": 2023,
+  "copyrightYear": 2024,
   "license": "https://github.com/caltechlibrary/baler/blob/main/LICENSE",
   "isAccessibleForFree": true,
-  "url": "https://caltechlibrary.github.io/baler",
   "codeRepository": "https://github.com/caltechlibrary/baler",
   "readme": "https://github.com/caltechlibrary/baler/blob/main/README.md",
   "releaseNotes": "https://github.com/caltechlibrary/baler/blob/main/CHANGES.md",
   "issueTracker": "https://github.com/caltechlibrary/baler/issues",
   "downloadUrl": "https://github.com/caltechlibrary/baler/releases",
-  "softwareHelp": "https://caltechlibrary.github.io/baler",
   "relatedLink": "https://data.caltech.edu/records/h75w5-y7y57",
   "keywords": [
     "software",
