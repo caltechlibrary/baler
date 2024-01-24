@@ -1,4 +1,4 @@
-# Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="33%" align="right" src=".graphics/baler.jpg">
+# Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="30%" align="right" src=".graphics/baler.jpg">
 
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
 
@@ -23,23 +23,23 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 
 ## Introduction
 
-The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: there might be typographical errors, or the destinations might disappear over time, or other reasons. Manually testing the validity of links on a regular basis is laborious and error-prone. This is clearly a situation where automation helps, and that's where Baler comes in.
+The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons, including inaccuracies, typographical errors, and destinations that disappear over time. Manually testing the validity of links on a regular basis is laborious and error-prone. This is clearly a situation where automation helps, and that's where Baler comes in.
 
 Baler (<em><ins><b>Ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, and filing issue reports when problems are found. It's designed to run when changes are pushed to a repository as well as on a regular schedule; the latter helps detect when previously-valid links stop working because of [link rot](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0115253) or other problems. Though it’s not the only GitHub Action available for this purpose, some features set Baler apart from the others:
 
-* _Simplicity_: a single workflow handles both testing files and opening an issue.
-* _Smart issue handling_: before it opens a new issue, Baler looks at open issues in the repository. If any already reported the same URLs, Baler doesn't open a new issue.
+* _Simplicity_: a single, short workflow handles both testing files and opening an issue.
+* _Smart issue handling_: before it opens a new issue, Baler looks at open issues in the repository. If any previously reported the same URLs, Baler doesn't open a new issue.
 * _Informative issue reports_: the issues opened by Baler not only list the URLs that failed; they also describe the reasons for the failures.
 * _Simple exclusion list_: fake URLs meant as examples, or real URLs that nevertheless fail when tested from GitHub’s cloud runners, can be skipped by adding them to a file in your repository.
 
-Baler lets you follow the old proverb [“make hay while the sun shines”](https://grammarist.com/make-hay/) – take advantage of opportunities (in this case, easy automated testing) when they’re available.
+Baler lets you follow the proverb [“make hay while the sun shines”](https://grammarist.com/make-hay/) – take advantage of opportunities (in this case, easy automated testing) when they’re available.
 
 
 ## Installation
 
 To use Baler, you need to create a GitHub Actions workflow file in your repository. Follow these simple steps:
 
-1. In the main branch of your repository, create a `.github/workflows` directory if this directory does not already exist.
+1. In the main branch of your repository, create a `.github/workflows` directory if one does not already exist.
 2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
@@ -100,7 +100,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 
 ## Quick start
 
-Once the GitHub Actions workflow is installed in your repository on GitHub, Baler will run whenever a configured trigger event occurs. The trigger conditions are specified in the `on` statement of the `bad-link-reporter.yml` workflow file. The default workflow sets the condictions to be pull requests, a scheduled run once a week, and manual execution.
+Once the workflow is installed in your repository on GitHub, Baler will run whenever a configured trigger event occurs. The trigger conditions are specified in the `on` statement of the `bad-link-reporter.yml` workflow file. The default workflow sets the conditions to be pull requests, a scheduled run once a week, and manual execution.
 
 Right after installing the workflow in your GitHub repository, it's wise to do a manual test run in order to check that things are working as expected.
 
@@ -115,7 +115,7 @@ At the conclusion of the run, if any invalid or unreachable URLs were found in y
 
 ## Usage
 
-Baler’s behavior is controlled by the `bad-link-reporter.yml` workflow file. There are two aspects of the behavior: (a) the events that cause Baler to run, and (b) the characteristics that can be controlled by configuration parameters set in the workflow file.
+Baler’s behavior is controlled by the `bad-link-reporter.yml` workflow file. There are two aspects of the behavior: (a) events that cause Baler to run, and (b) characteristics that can be controlled by setting  parameter values in the workflow file.
 
 
 ### Triggers that cause workflow execution
@@ -126,11 +126,11 @@ The default triggers in the sample workflow are:
 * weekly scheduled runs
 * manual dispatch execution of the workflow
 
-Triggering the workflow on pushes is typically the expected behavior: when you save a change to a file, you would like to be notified if there is a broken link. Triggering on pushes also supports users who edit files on GitHub and use pull requests to add their changes, because it ensures the workflow is only executed once and not twice (which would happen if it also used `pull_request` as a trigger). When triggered this way, Baler only tests links in `.md` files that actually changed in the push compared to the versions of those files in the destination branch.
+Triggering the workflow on pushes is typically the expected behavior: when you save changes to a file, you would probably like to be notified if it contains a broken link. Triggering on pushes also supports users who edit files on GitHub and use pull requests to add their changes, because it ensures the workflow is only executed once and not twice (which would happen if it also used `pull_request` as a trigger). When triggered this way, Baler only tests links in `.md` files that actually changed in the push compared to the versions of those files in the destination branch.
 
 Triggering on pushes does have a downside: if you make several edits in a row, the workflow will run on each push (or each file save, if editing on GitHub). If there is a bad link in the file, it could lead to multiple identical issues being filed – except that it won't, because Baler is smart enough to check if a past issue already reported the same URLs. So although each push will trigger a workflow run, no new issues will be opened if nothing has changed in terms of bad links.
 
-A once-a-week cron/scheduled excution is an important way to find links that worked in the past but stopped working due to link rot or other problems. If the Markdown files in your repository are not edited for an extended period of time, no pushes will occur to cause Baler to run; thus, it makes sense to run it periodically irrespective of editing activity to make sure that links in Markdown files are still valid. When invoked by cron, the workflow tests all `.md` files matched by the pattern defined by `files`, regardless of whether the files were modified in the most recent commit.
+A once-a-week cron/scheduled execution is an important way to find links that worked in the past but stopped working due to link rot or other problems. If the Markdown files in your repository are not edited for an extended period of time, no pushes will occur to cause Baler to run; thus, it makes sense to run it periodically irrespective of editing activity, to make sure that links in the Markdown files are still valid. When invoked by cron, the workflow tests all `.md` files matched by the pattern defined by `files`, regardless of whether the files were modified in the most recent commit.
 
 Finally, the manual dispatch lets you start the workflow manually. When invoked this way, the workflow again tests all `.md` files matched by the pattern defined by `files`, regardless of whether the files were modified in the latest commit. Rationale: if you're invoking the action manually, you probably intend to test all the files as they exist in the repository now, and not just the files changed in the last commit.
 
@@ -159,20 +159,22 @@ The time (in seconds) that Baler should wait on a URL that doesn't respond befor
 
 #### `ignore`
 
-The value of the input parameter `ignore` should be a plain text file file containing URLs that Baler should ignore. The default value is `.github/workflows/ignored-urls.txt`. The file does not have to exist; if it doesn't exist, this parameter simply has no effect. The parameter can only reference a file in the repository and not an external file. Each URL should be written alone on a separate line of the file. They can be written as regular expresions; e.g., `https://example\.(com|org)`.
+The value of the input parameter `ignore` should be a plain text file file containing URLs that Baler should ignore. The default value is `.github/workflows/ignored-urls.txt`. The file does not have to exist; if it doesn't exist, this parameter simply has no effect. The parameter can only reference a file in the repository and not an external file. Each URL should be written alone on a separate line of the file. They can be written as regular expressions; e.g., `https://example\.(com|org)`.
 
 Telling Baler to ignore certain URLs is useful if some of your files contain fake URLs used as examples in documentation, or when certain real URLs are repeatedly flagged as unreachable when the workflow runs in GitHub's computing environment (see [next section below](#known-issues-and-limitations)).
 
 
 ## Known issues and limitations
 
-Baler only tests URLs that use the scheme `https` or `http`.
+Baler is designed to test only URLs that use the scheme `https` or `http`.
 
-When Baler runs on GitHub, it will sometimes mysteriously report a link as unreacheable even though you can access it without trouble from your local computer. It's not yet clear what causes this. My current best guess is that it's due to network routing or DNS issues in the environment where the link checker actually runs (i.e., GitHub's computing environment).
+When Baler runs on GitHub, it will sometimes mysteriously report a link as unreachable even though you can access it without trouble from your local computer. It's not yet clear what causes this. My current best guess is that it's due to network routing or DNS issues in the environment where the link checker actually runs (i.e., GitHub's computing environment).
 
-Baler may take a long time to run if one or more links in a file are timing out. The reason is that it has to wait for timeouts to occur, and then wait some more before trying one more time (and then wait for another timeout period if the retry fails). It has to do this for every link that times out. The more URLs that do this, the longer the overall process will take. If you encouter links that time out when Baler runs as a GitHub Action but that resolve properly when you visit them from your browser, you can add those URLs to the file defined by the `ignore` parameter (see [above](#ignore)) to skip testing them in the future.
+Baler may take a long time to run if one or more links in a file are timing out. The reason is that it has to wait for a timeout to, well, _time out_, and then wait some more before trying one more time (and then wait for another timeout period if the retry fails). It has to do this for every link that times out. The more URLs that do this, the longer the overall process will take. If you encounter links that time out when Baler runs as a GitHub Action but that resolve properly when you visit them from your browser, you can add those URLs to the ignore list (see [above](#ignore)) to skip testing them in the future.
 
 Adding problematic URLs to the `ignore` file is a simple workaround, but there is a downside. If they are never tested, then Baler can't report if they really _do_ go stale in the future. A better solution would be to implement an adaptive algorithm by which Baler remembers timeout failures and stops testing the problematic URLs only for a time, then resumes testing them again automatically in the future. Unfortunately, this can't be implemented until the problem described in the first paragraph (that some URLs time out _only_ when Baler runs on GitHub) is resolved.
+
+Finally, some sites deliberately block access from GitHub, presumably in an attempt to block scrapers or bots or other processes running from people's GitHub actions. This will typically show up in Baler's reports as HTTP code 403, "Failed: Network error: Forbidden". The only thing to do in such cases is to double-check that the URLs are valid from your local computer, and if they are, add them to the ignore list (see [above](#ignore)).
 
 
 ## Getting help
@@ -187,7 +189,7 @@ Your help and participation in enhancing Baler is welcome!  Please visit the [gu
 
 ## License
 
-Software produced by the Caltech Library is Copyright © 2023 California Institute of Technology.  This software is freely distributed under a BSD-style license.  Please see the [LICENSE](LICENSE) file for more information.
+Software produced by the Caltech Library is Copyright © 2024 California Institute of Technology.  This software is freely distributed under a BSD-style license.  Please see the [LICENSE](LICENSE) file for more information.
 
 
 ## Acknowledgments
