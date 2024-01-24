@@ -123,7 +123,7 @@ vars:;
 .SILENT: report
 report: vars
 	echo "$(color)name$(reset)	 = $(name)"	  | expand -t 20
-	echo "$(color)progname$(reset)   = $(progname)"   | expand -t 20
+	echo "$(color)progname$(reset)	 = $(progname)"   | expand -t 20
 	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
 	echo "$(color)desc$(reset)	 = $(desc)"	  | expand -t 20
 	echo "$(color)version$(reset)	 = $(version)"	  | expand -t 20
@@ -131,7 +131,7 @@ report: vars
 	echo "$(color)email$(reset)	 = $(email)"	  | expand -t 20
 	echo "$(color)license$(reset)	 = $(license)"	  | expand -t 20
 	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
-	echo "$(color)repo url$(reset)   = $(repo_url)"   | expand -t 20
+	echo "$(color)repo url$(reset)	 = $(repo_url)"   | expand -t 20
 	echo "$(color)branch$(reset)	 = $(branch)"	  | expand -t 20
 	echo "$(color)rdm_id$(reset)	 = $(rdm_id)"	  | expand -t 20
 	echo "$(color)rdm_doi$(reset)	 = $(rdm_doi)"	  | expand -t 20
