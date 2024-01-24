@@ -155,7 +155,7 @@ If Baler finds invalid URLs, then before it opens an issue, it checks the previo
 
 #### `timeout`
 
-The time (in seconds) that Baler should wait on a URL that doesn't respond before giving up and trying to reach the URL one more time. Baler will wait 10&nbsp;seconds between attempts. It will try an unresponsive URL a total of two times before reporting a timeout.
+The time (in seconds) that Baler should wait on a URL that doesn't respond before giving up and trying to reach the URL one more time. Baler will wait 15&nbsp;seconds between attempts. It will try an unresponsive URL a total of two times before reporting a timeout.
 
 #### `ignore`
 
