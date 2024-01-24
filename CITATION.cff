@@ -7,10 +7,10 @@ authors:
     orcid: https://orcid.org/0000-0001-9105-5960
 title: Baler – BAd Link reportER
 abstract: Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.
-version: 0.0.2
-date-released: 2023-12-12
-repository-code: "https://github.com/caltechlibrary/baler"
-license-url: "https://github.com/caltechlibrary/baler/blob/main/LICENSE"
+version: 1.0.0
+date-released: 2024-01-24
+repository-code: https://github.com/caltechlibrary/baler
+license-url: https://github.com/caltechlibrary/baler/blob/main/LICENSE
 type: software
 keywords:
   - automation

@@ -1,11 +1,11 @@
 {
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
-  "name": "Baler: BAd Link reportER",
+  "name": "Baler – BAd Link reportER",
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
-  "version": "0.0.2",
-  "datePublished": "2023-12-14",
+  "version": "1.0.0",
+  "datePublished": "2024-01-23",
   "dateCreated": "2023-12-11",
   "author": [
     {

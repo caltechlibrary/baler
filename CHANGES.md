@@ -1,5 +1,10 @@
 # Change log for Baler
 
+## Version 1.0.0
+
+First full release.
+
+
 ## Version 0.0.2
 
 This version features overhauled logic, updated sample workflow, and updated documentation.
