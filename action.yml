@@ -100,20 +100,20 @@ runs:
         fi
 
     - name: Check out source repository.
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: ${{env.depth_needed}}
         persist-credentials: true
 
     - name: Get list of all files matching the desired pattern.
-      uses: tj-actions/glob@v17
+      uses: tj-actions/glob@v19
       id: match-files
       with:
         files: ${{inputs.files}}
 
     - name: Check if any files matching the pattern have been modified.
       id: test-changes
-      uses: tj-actions/changed-files@v40
+      uses: tj-actions/changed-files@v42
       with:
         files: ${{inputs.files}}
 
@@ -299,7 +299,7 @@ runs:
     - name: Open a new issue/ticket to report the problems.
       if: env.continue == 'true' && env.lychee_exit_code != 0
       id: create-issue
-      uses: peter-evans/create-issue-from-file@v4
+      uses: peter-evans/create-issue-from-file@v4.0.1
       with:
         title: Invalid URLs in Markdown files
         content-filepath: ${{env.lychee_output}}
