@@ -173,18 +173,21 @@ update-all: update-meta update-citation update-example
 # variable from which this makefile gets its version number in the first place.
 update-meta:
 	@sed -i .bak -e '/"datePublished"/ s|: ".*"|: "$(today)"|' codemeta.json
+	@echo codemeta.json updated ✨
 
 update-citation: vars
-	@sed -i .bak -e '/^url:/ s|".*"|"$(url)"|' CITATION.cff
-	@sed -i .bak -e '/^title:/ s|".*"|"$(name)"|' CITATION.cff
-	@sed -i .bak -e '/^version:/ s|".*"|"$(version)"|' CITATION.cff
-	@sed -i .bak -e '/^abstract:/ s|".*"|"$(desc)"|' CITATION.cff
-	@sed -i .bak -e '/^license-url:/ s|".*"|"$(license)"|' CITATION.cff
-	@sed -i .bak -e '/^date-released:/ s|".*"|"$(today)"|' CITATION.cff
-	@sed -i .bak -e '/^repository-code:/ s|".*"|"$(repo_url)"|' CITATION.cff
+	@sed -i .bak -e '/^url:/ s|:.*|: $(url)|' CITATION.cff
+	@sed -i .bak -e '/^title:/ s|:.*|: $(name)|' CITATION.cff
+	@sed -i .bak -e '/^version:/ s|:.*|: $(version)|' CITATION.cff
+	@sed -i .bak -e '/^abstract:/ s|:.*|: $(desc)|' CITATION.cff
+	@sed -i .bak -e '/^license-url:/ s|:.*|: $(license)|' CITATION.cff
+	@sed -i .bak -e '/^date-released:/ s|:.*|: $(today)|' CITATION.cff
+	@sed -i .bak -e '/^repository-code:/ s|:.*|: $(repo_url)|' CITATION.cff
+	@echo CITATION.cff updated ✨
 
 update-example:
 	@sed -i .bak -E -e "/.* version [0-9].[0-9]+.[0-9]+/ s/[0-9].[0-9]+.[0-9]+/$(version)/" sample-workflow.yml
+	@echo sample-workflow.yml updated ✨
 
 edited := codemeta.json CITATION.cff sample-workflow.yml
 
@@ -249,7 +252,7 @@ update-relatedlink: vars
 
 #: Clean this directory of temporary and backup files.
 clean: clean-release
-	@echo ✨ Cleaned! ✨
+	@echo 🧼 Cleaned! 🧽
 
 clean-release:;
 	rm -rf codemeta.json.bak README.md.bak sample-workflow.yml.bak
