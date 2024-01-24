@@ -1,0 +1,7 @@
+rules:
+  colons:
+    max-spaces-after: -1
+  document-start:
+      present: false
+  document-end:
+      present: false
