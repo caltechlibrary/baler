@@ -5,7 +5,7 @@
 # Website: https://github.com/caltechlibrary/baler
 
 name: "Baler – BAd Link reportER"
-description: "Test URLs in Markdown files and open an issue if problems found"
+description: "Test URLs in Markdown files and open an issue for problems found"
 
 inputs:
 
@@ -48,7 +48,7 @@ inputs:
   # Internal parameters.
 
   lyVersion:
-    description: "Version of lychee link checker program."
+    description: "Version of Lychee link checker program."
     default: 0.14.1
     required: false
   lyDownloadBase:
@@ -76,16 +76,14 @@ inputs:
 #     not a good reference point for this purpose; and (2) regularly testing
 #     all Markdown files, regardless of recent edits, is good for discovering
 #     links that worked in the past but stopped working due to (e.g.) link
-#     rot. In case #2, there are no local file changes.
+#     rot. In case #2, there are no local file changes to trigger on.
 #
 # all other events: Test the .md files that are being changed as a result of
-#     request, compared to the versions of the files in the destination
+#     the request, compared to the versions of the files in the destination
 #     branch. The trigger/invocation is controlled by the trigger rules of
 #     the invoking workflow. (So, for example, in the sample workflow
-#     provided for users, pull requests result in testing .md files that were
-#     modified by the pull request, but push events do not test any .md files
-#     unless the push changes the workflow file itself or the file containing
-#     the list of ignored urls.)
+#     provided for users, push events result in testing .md files that were
+#     modified by the push.)
 
 runs:
   using: composite
@@ -323,7 +321,7 @@ runs:
         # Report a failure.
         exit 1
 
-    - name: Log internal variable values in debug mode.
+    - name: Log internal variable values in debug mode or if a failure occurs.
       if: inputs.debug == 'true' || failure()
       shell: bash
       run: |
@@ -336,6 +334,7 @@ runs:
         echo "ignore: ${{inputs.ignore}}"
         echo "labels: ${{inputs.labels}}"
         echo "lookback: ${{inputs.lookback}}"
+        echo "timeout: ${{inputs.timeout}}"
         echo "debug: ${{inputs.debug}}"
         echo "depth_needed (for git history) = ${{env.depth_needed}}"
         echo "files considered = ${{env.considered}}"
