@@ -12,6 +12,7 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 
 * [Introduction](#introduction)
 * [Installation](#installation)
+* [Quick start](#quick-start)
 * [Usage](#usage)
 * [Known issues and limitations](#known-issues-and-limitations)
 * [Getting help](#getting-help)
@@ -22,24 +23,25 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 
 ## Introduction
 
-The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: there might be typographical errors, or the destinations might disappear over time, or other reasons. Manually testing the validity of links on a regular basis is laborious and error-prone. This is clearly a case where automation is best. That's where Baler comes in.
+The URLs of hyperlinks inside Markdown files may be invalid for any number of reasons: there might be typographical errors, or the destinations might disappear over time, or other reasons. Manually testing the validity of links on a regular basis is laborious and error-prone. This is clearly a situation where automation helps, and that's where Baler comes in.
 
-Baler (<em><ins><b>Ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, and filing issue reports when problems are found. It is neither the first nor only GitHub Action for this purpose – so what sets Baler apart from the others?
+Baler (<em><ins><b>Ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) for automatically testing the links inside Markdown files in your repository, and filing issue reports when problems are found. It's designed to run when changes are pushed to a repository as well as on a regular schedule; the latter helps detect when previously-valid links stop working because of [link rot](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0115253) or other problems. Though it’s not the only GitHub Action available for this purpose, some features set Baler apart from the others:
 
-* _Simplicity_: a single action for both testing files and opening an issue.
-* _Smart issue handling_: before it opens a new issue, Baler looks at open issues in the repository and checks if any already reported the same URLs. If so, Baler doesn't open a new issue.
-* _Informative issue contents_: the issues opened by Baler not only list the URLs that failed; they also describe the reasons for the failures.
+* _Simplicity_: a single workflow handles both testing files and opening an issue.
+* _Smart issue handling_: before it opens a new issue, Baler looks at open issues in the repository. If any already reported the same URLs, Baler doesn't open a new issue.
+* _Informative issue reports_: the issues opened by Baler not only list the URLs that failed; they also describe the reasons for the failures.
+* _Simple exclusion list_: fake URLs meant as examples, or real URLs that nevertheless fail when tested from GitHub’s cloud runners, can be skipped by adding them to a file in your repository.
+
+Baler lets you follow the old proverb [“make hay while the sun shines”](https://grammarist.com/make-hay/) – take advantage of opportunities (in this case, easy automated testing) when they’re available.
 
 
 ## Installation
 
-To use Baler, you need to create a GitHub Actions workflow file in your repository. Follow these simple steps.
-
-### Add the workflow file to your repository
+To use Baler, you need to create a GitHub Actions workflow file in your repository. Follow these simple steps:
 
 1. In the main branch of your repository, create a `.github/workflows` directory if this directory does not already exist.
 2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
-3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into the file:
+3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
     # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.2.
@@ -95,16 +97,25 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 4. Save the file, add it to your git repository, and commit the changes.
 5. (If you did the steps above outside of GitHub) Push your repository changes to GitHub.
 
-### Test the workflow
 
-Once you have created the workflow file and pushed it to GitHub, it's wise to do a manual test run in order to check that things are working as expected.
+## Quick start
 
-[... FILL IN ...]
+Once the GitHub Actions workflow is installed in your repository on GitHub, Baler will run whenever a configured trigger event occurs. The trigger conditions are specified in the `on` statement of the `bad-link-reporter.yml` workflow file. The default workflow sets the condictions to be pull requests, a scheduled run once a week, and manual execution.
+
+Right after installing the workflow in your GitHub repository, it's wise to do a manual test run in order to check that things are working as expected.
+
+1. Go to the _Actions_ tab in your repository and click on the workflow named "Bad Link Reporter" in the sidebar on the left<p align="center"><img src=".graphics/github-run-workflow.png" alt="Screenshot of GitHub actions workflow list" width="90%"></p>
+2. In the page shown by GitHub next, click the <kbd>Run workflow</kbd> button in the right-hand side of the blue strip<p align="center"><img src=".graphics/github-run-workflow-button.png" alt="Screenshot of GitHub Actions workflow run button" width="75%"></p>
+3. In the pull-down, click the green <kbd>Run workflow</kbd> button near the bottom<p align="center"><img src=".graphics/github-workflow-run-button.png" alt="Screenshot of GitHub Actions workflow run menu" width="40%"></p>
+4. Refresh the web page and a new line will be shown named after your workflow file<p align="center"><img src=".graphics/github-workflow-running.png" alt="Screenshot of GitHub Actions running" width="90%"></p>
+5. Click the title of that running workflow to make GitHub show the progress and results.
+
+At the conclusion of the run, if any invalid or unreachable URLs were found in your repository's Markdown files, Baler will have opened a new issue to report the problems. If Baler found no problems, it will only print a message to that effect in the job results page.
 
 
 ## Usage
 
-The trigger conditions that causes Baler to run are determined by the `on` statement in your `bad-link-reporter.yml` workflow file, and certain aspects of Baler's behavior are controlled by configuration parameters assigned via environment variables in the workflow.
+Baler’s behavior is controlled by the `bad-link-reporter.yml` workflow file. There are two aspects of the behavior: (a) the events that cause Baler to run, and (b) the characteristics that can be controlled by configuration parameters set in the workflow file.
 
 
 ### Triggers that cause workflow execution
@@ -112,12 +123,12 @@ The trigger conditions that causes Baler to run are determined by the `on` state
 The default triggers in the sample workflow are:
 
 * push requests that involve `.md` files
-* a scheduled run once a week
+* weekly scheduled runs
 * manual dispatch execution of the workflow
 
 Triggering the workflow on pushes is typically the expected behavior: when you save a change to a file, you would like to be notified if there is a broken link. Triggering on pushes also supports users who edit files on GitHub and use pull requests to add their changes, because it ensures the workflow is only executed once and not twice (which would happen if it also used `pull_request` as a trigger). When triggered this way, Baler only tests links in `.md` files that actually changed in the push compared to the versions of those files in the destination branch.
 
-Triggering on pushes does have a downside: if you make several edits in a row, the workflow will run on each push (or each file save, if editing on GitHub). If there is a bad link in the file, it could lead to multiple identical issues being filed – except that it won't, because Baler is smart enough to check if a past issue already reported the same URLs. So while each push will trigger a workflow run, no new issues will be opened if nothing has changed in terms of bad links.
+Triggering on pushes does have a downside: if you make several edits in a row, the workflow will run on each push (or each file save, if editing on GitHub). If there is a bad link in the file, it could lead to multiple identical issues being filed – except that it won't, because Baler is smart enough to check if a past issue already reported the same URLs. So although each push will trigger a workflow run, no new issues will be opened if nothing has changed in terms of bad links.
 
 A once-a-week cron/scheduled excution is an important way to find links that worked in the past but stopped working due to link rot or other problems. If the Markdown files in your repository are not edited for an extended period of time, no pushes will occur to cause Baler to run; thus, it makes sense to run it periodically irrespective of editing activity to make sure that links in Markdown files are still valid. When invoked by cron, the workflow tests all `.md` files matched by the pattern defined by `files`, regardless of whether the files were modified in the most recent commit.
 
