@@ -4,35 +4,35 @@
 # License: Modified BSD 3-clause – see file "LICENSE" in the project website.
 # Website: https://github.com/caltechlibrary/baler
 
-name: "Baler – BAd Link reportER"
-description: "Test URLs in Markdown files and open an issue for problems found"
+name: Baler – BAd Link reportER
+description: Test URLs in Markdown files and open an issue for problems found
 
 inputs:
 
   # User-level parameters.
 
   files:
-    description: "Regexes for files to test. Can be comma-separated list."
+    description: Regexes for files to test. Can be comma-separated list.
     default: '*.md'
     required: true
     type: string
   ignore:
-    description: "File containing a list of URLs to ignore, one per line."
-    default: '.github/workflows/ignored-urls.txt'
+    description: File containing a list of URLs to ignore, one per line.
+    default: .github/workflows/ignored-urls.txt
     required: false
     type: string
   labels:
-    description: "Labels assigned to GitHub issues created by this workflow."
-    default: 'bug'
+    description: Labels assigned to GitHub issues created by this workflow.
+    default: bug
     required: false
     type: string
   lookback:
-    description: "How many previous issues to check for duplicate reports."
+    description: How many previous issues to check for duplicate reports.
     default: 5
     required: false
     type: number
   timeout:
-    description: "Number of seconds to wait on unresponsive URL."
+    description: Number of seconds to wait on unresponsive URL.
     default: 15
     required: false
     type: number
@@ -40,7 +40,7 @@ inputs:
   # Advanced parameters.
 
   debug:
-    description: "Run in debug mode."
+    description: Run in debug mode.
     default: false
     required: false
     type: boolean
@@ -48,15 +48,15 @@ inputs:
   # Internal parameters.
 
   lyVersion:
-    description: "Version of Lychee link checker program."
+    description: Version of Lychee link checker program.
     default: 0.14.1
     required: false
   lyDownloadBase:
-    description: "Base download URL for Lychee binaries."
-    default: 'https://github.com/lycheeverse/lychee/releases/download'
+    description: Base download URL for Lychee binaries.
+    default: https://github.com/lycheeverse/lychee/releases/download
     required: false
   lyRetryWaitTime:
-    description: "Time to wait between retries, in seconds."
+    description: Time to wait between retries, in seconds.
     default: 10
     required: false
 
@@ -356,7 +356,7 @@ runs:
         echo "msg" >> $GITHUB_STEP_SUMMARY
 
 
-author: "Michael Hucka -- https://github.com/mhucka"
+author: Michael Hucka – https://github.com/mhucka
 branding:
   icon: thumbs-down
   color: orange

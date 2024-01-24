@@ -44,11 +44,11 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.2.
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 1.0.0.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler
 
-    name: "Bad Link Reporter"
+    name: Bad Link Reporter
 
     # Configure this section ─────────────────────────────────────────────
 
@@ -57,7 +57,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
       files: '*.md'
 
       # Label assigned to issues created by this workflow:
-      labels: 'bug'
+      labels: bug
 
       # Number of previous issues to check for duplicate reports.
       lookback: 10
@@ -66,11 +66,11 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
       timeout: 15
 
       # Optional file containing a list of URLs to ignore, one per line:
-      ignore: '.github/workflows/ignored-urls.txt'
+      ignore: .github/workflows/ignored-urls.txt
 
     on:
       schedule:  # Cron syntax is: "min hr day-of-month month day-of-week"
-        - cron: "00 04 * * 1"
+        - cron: 00 04 * * 1
       push:
         paths: ['**.md']
       workflow_dispatch:
