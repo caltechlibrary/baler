@@ -350,7 +350,7 @@ runs:
       if: env.continue == 'true' && env.lychee_exit_code == 0
       shell: bash
       run: |
-        msg="<h2>No invalid URLs found
+        msg="<h2>No invalid URLs found</h2>
         <p>No bad links were found in the files matched by this pattern:<br>
         <code>${{inputs.files}}</code></p>"
         echo "$msg" >> $GITHUB_STEP_SUMMARY
