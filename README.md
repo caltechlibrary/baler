@@ -85,7 +85,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
         permissions:
           issues: write
         steps:
-          - uses: caltechlibrary/baler@main
+          - uses: caltechlibrary/baler@v1
             with:
               files:    ${{github.event.inputs.files    || env.files}}
               labels:   ${{github.event.inputs.labels   || env.labels}}
