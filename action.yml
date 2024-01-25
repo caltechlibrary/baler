@@ -353,7 +353,7 @@ runs:
         msg="<h2>No invalid URLs found
         <p>No bad links were found in the files matched by this pattern:<br>
         <code>${{inputs.files}}</code></p>"
-        echo "msg" >> $GITHUB_STEP_SUMMARY
+        echo "$msg" >> $GITHUB_STEP_SUMMARY
 
 
 author: Michael Hucka – https://github.com/mhucka
