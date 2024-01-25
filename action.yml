@@ -259,7 +259,7 @@ runs:
         fi
 
     - name: Check if we've already opened a duplicate issue.
-      if: env.continue == 'true'
+      if: env.continue == 'true' && env.lychee_exit_code != 0
       shell: bash
       run: |
         # First, save the current issue text body, to use for comparisons.
