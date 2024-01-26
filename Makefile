@@ -139,9 +139,10 @@ report: vars
 
 # make lint & make test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#: Run the code through Python linters like flake8.
+#: Run code and other files through linters.
 lint:
 	markdownlint-cli2 *.md
+	yamllint $(shell find . -name '*.yml')
 
 #: Run unit tests and coverage tests.
 test tests:;

@@ -5,7 +5,8 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://github.com/caltechlibrary/baler/blob/main/LICENSE)
 ![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&label=Actions&logoColor=white&style=flat-square)
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/baler.svg?color=b44e88&label=Release&style=flat-square)](https://github.com/caltechlibrary/baler/releases)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/h75w5-y7y57)](https://data.caltech.edu/records/h75w5-y7y57)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/71pqb-q9996)](https://data.caltech.edu/records/71pqb-q9996)
+[![GitHub marketplace](https://img.shields.io/badge/marketplace-Baler-green?logo=github&color=e4722f&style=flat-square&label=Marketplace)](https://github.com/marketplace/actions/baler)
 
 
 ## Table of contents
@@ -44,11 +45,11 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 0.0.2.
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 1.0.0.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler
 
-    name: "Bad Link Reporter"
+    name: Bad Link Reporter
 
     # Configure this section ─────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
       files: '*.md'
 
       # Label assigned to issues created by this workflow:
-      labels: 'bug'
+      labels: bug
 
       # Number of previous issues to check for duplicate reports.
       lookback: 10
@@ -66,11 +67,11 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
       timeout: 15
 
       # Optional file containing a list of URLs to ignore, one per line:
-      ignore: '.github/workflows/ignored-urls.txt'
+      ignore: .github/workflows/ignored-urls.txt
 
     on:
       schedule:  # Cron syntax is: "min hr day-of-month month day-of-week"
-        - cron: "00 04 * * 1"
+        - cron: 00 04 * * 1
       push:
         paths: ['**.md']
       workflow_dispatch:
@@ -85,7 +86,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
         permissions:
           issues: write
         steps:
-          - uses: caltechlibrary/baler@main
+          - uses: caltechlibrary/baler@v1
             with:
               files:    ${{github.event.inputs.files    || env.files}}
               labels:   ${{github.event.inputs.labels   || env.labels}}

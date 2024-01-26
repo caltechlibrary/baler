@@ -5,7 +5,7 @@
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
   "version": "1.0.0",
-  "datePublished": "2024-01-23",
+  "datePublished": "2024-01-24",
   "dateCreated": "2023-12-11",
   "author": [
     {
@@ -53,7 +53,7 @@
   "releaseNotes": "https://github.com/caltechlibrary/baler/blob/main/CHANGES.md",
   "issueTracker": "https://github.com/caltechlibrary/baler/issues",
   "downloadUrl": "https://github.com/caltechlibrary/baler/releases",
-  "relatedLink": "https://data.caltech.edu/records/h75w5-y7y57",
+  "relatedLink": "https://data.caltech.edu/records/71pqb-q9996",
   "keywords": [
     "software",
     "automation",
