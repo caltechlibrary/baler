@@ -11,6 +11,7 @@ version: 2.0.0
 date-released: 2024-01-25
 repository-code: https://github.com/caltechlibrary/baler
 license-url: https://github.com/caltechlibrary/baler/blob/main/LICENSE
+doi: 10.22002/17acm-shh61
 type: software
 keywords:
   - automation
