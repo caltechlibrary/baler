@@ -1,5 +1,12 @@
 # Change log for Baler
 
+## Version 2.0.0
+
+Changes in this version:
+
+* Use just-released v20 of [tj-actions/glob](https://github.com/tj-actions/glob) to solve warning about Node version deprecation in v19 of the action.
+
+
 ## Version 1.0.0
 
 First full release.

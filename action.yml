@@ -106,7 +106,7 @@ runs:
         persist-credentials: true
 
     - name: Get list of all files matching the desired pattern.
-      uses: tj-actions/glob@v19
+      uses: tj-actions/glob@v20
       id: match-files
       with:
         files: ${{inputs.files}}
