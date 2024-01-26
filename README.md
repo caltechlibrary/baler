@@ -5,7 +5,7 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://github.com/caltechlibrary/baler/blob/main/LICENSE)
 ![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&label=Actions&logoColor=white&style=flat-square)
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/baler.svg?color=b44e88&label=Release&style=flat-square)](https://github.com/caltechlibrary/baler/releases)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/71pqb-q9996)](https://data.caltech.edu/records/71pqb-q9996)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/17acm-shh61)](https://data.caltech.edu/records/17acm-shh61)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-Baler-green?logo=github&color=e4722f&style=flat-square&label=Marketplace)](https://github.com/marketplace/actions/baler-bad-link-reporter)
 
 
@@ -205,6 +205,13 @@ Numerous other broken link checkers similar to Baler can be found in GitHub. Som
 * [Markdown link check](https://github.com/gaurav-nelson/github-action-markdown-link-check)
 * [md-links](https://github.com/raulingg/md-links)
 * [My Broken Link Checker](https://github.com/marketplace/actions/my-broken-link-checker)
+
+Baler makes use of the following excellent software packages and GitHub Actions:
+
+* [lychee](https://github.com/lycheeverse/lychee) – fast, async, stream-based link checker written in Rust
+* [peter-evans/create-issue-from-file](https://github.com/peter-evans/create-issue-from-file) – A GitHub action to create an issue
+* [tj-actions/changed-files](https://github.com/tj-actions/changed-files) – GitHub action to retrieve files and directories
+* [tj-actions/glob](https://github.com/tj-actions/changed-files) – GitHub action to match file glob patterns
 
 This work was funded by the California Institute of Technology Library.
 
