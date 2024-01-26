@@ -206,6 +206,13 @@ Numerous other broken link checkers similar to Baler can be found in GitHub. Som
 * [md-links](https://github.com/raulingg/md-links)
 * [My Broken Link Checker](https://github.com/marketplace/actions/my-broken-link-checker)
 
+Baler makes use of the following excellent software packages and GitHub Actions:
+
+* [lychee](https://github.com/lycheeverse/lychee) – fast, async, stream-based link checker written in Rust
+* [peter-evans/create-issue-from-file](https://github.com/peter-evans/create-issue-from-file) – A GitHub action to create an issue
+* [tj-actions/changed-files](https://github.com/tj-actions/changed-files) – GitHub action to retrieve files and directories
+* [tj-actions/glob](https://github.com/tj-actions/changed-files) – GitHub action to match file glob patterns
+
 This work was funded by the California Institute of Technology Library.
 
 <div align="center">
