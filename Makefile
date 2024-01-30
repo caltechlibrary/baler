@@ -83,7 +83,7 @@ define instructions_text =
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
  1. Run $(color)make lint$(reset), fix any problems, and commit any changes.
  2. Run $(color)make tests$(reset) fix any problems, and commit any changes.
- 3. Update the version number in codemeta.json & commit the changes.
+ 3. Update the version number in codemeta.json.
  4. Update CHANGES.md if needed & commit changes.
  5. Check the output of $(color)make report$(reset) (ignoring current id & DOI).
  6. Run $(color)make clean$(reset).
@@ -144,8 +144,8 @@ report: vars
 
 #: Run code and other files through linters.
 lint:
-	markdownlint-cli2 *.md
-	yamllint $(shell find . -name '*.yml')
+	markdownlint-cli2 $(shell find . -name '*.md')
+	yamllint CITATION.cff $(shell find . -name '*.yml')
 
 #: Run unit tests and coverage tests.
 test tests:;
