@@ -1,5 +1,16 @@
 # Change log for Baler
 
+## Version
+
+Changes in this version:
+
+* Use v5 of [peter-evans/create-issue-from-file](https://github.com/peter-evans/create-issue-from-file) to solve warning about Node version deprecation.
+* Update more repository workflows to their latest versions.
+* Added a `.editorconfig` file for good measure.
+* Add more repo metadata fields to `CITATION.cff` and `codemeta.json`.
+* In `README.md`, use a better URL that always points to the latest version of the archived copy in our InvenioRDM server.
+
+
 ## Version 2.0.0
 
 Changes in this version:
