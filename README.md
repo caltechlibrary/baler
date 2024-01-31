@@ -5,7 +5,7 @@ Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></in
 [![License](https://img.shields.io/badge/License-BSD--like-lightgrey?style=flat-square)](https://github.com/caltechlibrary/baler/blob/main/LICENSE)
 ![GitHub](https://img.shields.io/badge/GitHub-%23000000.svg?logo=github&label=Actions&logoColor=white&style=flat-square)
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/baler.svg?color=b44e88&label=Release&style=flat-square)](https://github.com/caltechlibrary/baler/releases)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/17acm-shh61)](https://data.caltech.edu/records/17acm-shh61)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&colorA=gray&colorB=navy&query=$.pids.doi.identifier&uri=https://data.caltech.edu/api/records/h75w5-y7y57/versions/latest)](https://data.caltech.edu/records/h75w5-y7y57/latest)
 [![GitHub marketplace](https://img.shields.io/badge/marketplace-Baler-green?logo=github&color=e4722f&style=flat-square&label=Marketplace)](https://github.com/marketplace/actions/baler-bad-link-reporter)
 
 
@@ -45,7 +45,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.0.
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.1.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler
 

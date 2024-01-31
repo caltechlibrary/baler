@@ -75,27 +75,23 @@ help:
 
 #: Summarize how to do a release using this makefile.
 instructions:;
-	@$(info $(instructions_text))
+	$(info $(instructions_text))
 
 define instructions_text =
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Steps for doing a release                                       ┃
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Steps for doing a release                                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
  1. Run $(color)make lint$(reset), fix any problems, and commit any changes.
  2. Run $(color)make tests$(reset) fix any problems, and commit any changes.
  3. Update the version number in codemeta.json.
- 4. Check CHANGES.md, update if needed, and commit changes.
+ 4. Update CHANGES.md if needed & commit changes.
  5. Check the output of $(color)make report$(reset) (ignoring current id & DOI).
  6. Run $(color)make clean$(reset).
  7. Run $(color)make release$(reset); after some steps, it will open a file
     in your editor to write GitHub release notes. Copy the notes
     from CHANGES.md. Save the opened file to finish the process.
- 8. Check that everything looks okay with the GitHub release at
-    $(link)$(repo_url)/releases$(reset)
- 9. Wait for IGA to finish running its GitHub action at
-    $(link)$(repo_url)/actions$(reset)
-10. Run $(color)make post-release$(reset).
-14. Update the GitHub Marketplace version via the interface at
+ 8. Wait for the IGA GitHub Action to finish uploading to InvenioRDM
+ 9. Check that everything looks okay with the GitHub release at
     $(link)$(repo_url)/releases$(reset)
 endef
 
@@ -104,45 +100,52 @@ endef
 
 # These variables take longer to compute, and for some actions like "make help"
 # they are unnecessary and annoying to wait for.
-vars:;
-	$(eval url	:= $(strip $(shell jq -r .url codemeta.json)))
+vars: doi-vars
+	$(eval url	:= $(strip $(shell jq -r '.url // empty' codemeta.json)))
 	$(eval url	:= $(or $(url),$(repo_url)))
 	$(eval license	:= $(strip $(shell jq -r .license codemeta.json)))
 	$(eval desc	:= $(strip $(shell jq -r .description codemeta.json)))
 	$(eval author	:= \
 	  $(strip $(shell jq -r '.author[0].givenName + " " + .author[0].familyName' codemeta.json)))
 	$(eval email	:= $(strip $(shell jq -r .author[0].email codemeta.json)))
-	$(eval related	:= \
+
+# If this software isn't getting archived in InvenioRDM, the next rule will
+# leave rdm_id & new_doi undefined. Other rules in this makefile test for that.
+.SILENT: doi-vars
+doi-vars:
+	$(eval rdm_link	:= \
 	  $(strip $(shell jq -r '.relatedLink | if type == "array" then .[0] else . end' codemeta.json)))
-	$(eval rdm_url	:= $(shell cut -d'/' -f 1-3 <<< $(related)))
-	$(eval rdm_id	:= $(shell sed -r 's|.*/(.*)$$|\1|' <<< $(related)))
-	$(eval vers_url := $(rdm_url)/api/records/$(rdm_id)/versions)
-	$(eval rdm_doi	:= $(shell curl -s $(vers_url) | jq -r .hits.hits[0].pids.doi.identifier))
+ifneq ($(rdm_link),null)
+	$(eval rdm_url	  := $(shell cut -d'/' -f 1-3 <<< $(rdm_link)))
+	$(eval rdm_id	  := $(shell sed -r 's|.*/(.*)$$|\1|' <<< $(rdm_link)))
+	$(eval vers_url   := $(rdm_url)/api/records/$(rdm_id)/versions/latest)
+	$(eval latest_doi := $(shell curl -L -s $(vers_url) | jq -r .pids.doi.identifier))
+endif
 
 #: Print variables set in this Makefile from various sources.
 .SILENT: report
 report: vars
-	echo "$(color)name$(reset)	 = $(name)"	  | expand -t 20
-	echo "$(color)progname$(reset)	 = $(progname)"   | expand -t 20
-	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
-	echo "$(color)desc$(reset)	 = $(desc)"	  | expand -t 20
-	echo "$(color)version$(reset)	 = $(version)"	  | expand -t 20
-	echo "$(color)author$(reset)	 = $(author)"	  | expand -t 20
-	echo "$(color)email$(reset)	 = $(email)"	  | expand -t 20
-	echo "$(color)license$(reset)	 = $(license)"	  | expand -t 20
-	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 20
-	echo "$(color)repo url$(reset)	 = $(repo_url)"   | expand -t 20
-	echo "$(color)branch$(reset)	 = $(branch)"	  | expand -t 20
-	echo "$(color)rdm_id$(reset)	 = $(rdm_id)"	  | expand -t 20
-	echo "$(color)rdm_doi$(reset)	 = $(rdm_doi)"	  | expand -t 20
+	echo "$(color)name$(reset)	 = $(name)"	  | expand -t 21
+	echo "$(color)progname$(reset)	 = $(progname)"   | expand -t 21
+	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 21
+	echo "$(color)desc$(reset)	 = $(desc)"	  | expand -t 21
+	echo "$(color)version$(reset)	 = $(version)"	  | expand -t 21
+	echo "$(color)author$(reset)	 = $(author)"	  | expand -t 21
+	echo "$(color)email$(reset)	 = $(email)"	  | expand -t 21
+	echo "$(color)license$(reset)	 = $(license)"	  | expand -t 21
+	echo "$(color)url$(reset)	 = $(url)"	  | expand -t 21
+	echo "$(color)repo url$(reset)	 = $(repo_url)"   | expand -t 21
+	echo "$(color)branch$(reset)	 = $(branch)"	  | expand -t 21
+	echo "$(color)rdm_id$(reset)	 = $(rdm_id)"	  | expand -t 21
+	echo "$(color)latest_doi$(reset) = $(latest_doi)" | expand -t 21
 
 
 # make lint & make test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #: Run code and other files through linters.
 lint:
-	markdownlint-cli2 *.md
-	yamllint $(shell find . -name '*.yml')
+	markdownlint-cli2 $(shell find . -name '*.md')
+	yamllint CITATION.cff $(shell find . -name '*.yml')
 
 #: Run unit tests and coverage tests.
 test tests:;
@@ -152,7 +155,7 @@ test tests:;
 # make release ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #: Make a release on GitHub.
-release: | test-branch confirm-release release-on-github wait-on-iga print-next-steps
+release: | test-branch confirm-release release-on-github wait-on-iga update-doi
 
 test-branch:
 ifneq ($(branch),main)
@@ -188,9 +191,10 @@ update-citation: vars
 
 update-example:
 	@sed -i .bak -E -e "/.* version [0-9].[0-9]+.[0-9]+/ s/[0-9].[0-9]+.[0-9]+/$(version)/" sample-workflow.yml
+	@sed -i .bak -E -e "/.* version [0-9].[0-9]+.[0-9]+/ s/[0-9].[0-9]+.[0-9]+/$(version)/" README.md
 	@echo sample-workflow.yml updated ✨
 
-edited := codemeta.json CITATION.cff sample-workflow.yml
+edited := codemeta.json CITATION.cff sample-workflow.yml README.md
 
 commit-updates:
 	git add $(edited)
@@ -218,6 +222,7 @@ wait-on-iga:
 	sleep 2
 	$(eval pid := $(shell gh run list --workflow=iga.yml --limit 1 | tail -1 | awk -F $$'\t' '{print $$7}'))
 	gh run watch $(pid)
+	make post-release
 
 print-next-steps: vars
 	@$(info ┏━━━━━━━━━━━━┓)
@@ -228,25 +233,36 @@ print-next-steps: vars
 	@$(info  2. Run "make post-release" )
 	@$(info  3. Update the GitHub Marketplace version )
 
-#: Update values in CITATION.cff, codemeta.json, and README.md.
-post-release: update-doi update-relatedlink
+# We only do the following steps if this is software we archive in InvenioRDM.
+#
+# The DOI badge in README.md uses a URL that gets redirected automatically by
+# InvenioRDM to the latest release. However, the DOI in CITATION.cff and the
+# field relatedLink in codemeta.json need to point to the release we just made.
 
-update-doi: vars
-	$(eval doi_tail := $(shell cut -f'2' -d'/' <<< $(latest_doi)))
+post-release: update-citation-doi update-codemeta-link push-updates
+
+update-citation-doi: vars
+ifdef latest_doi
 	sed -i .bak -e '/doi:/ s|doi: .*|doi: $(latest_doi)|' CITATION.cff
-	sed -i .bak -E -e 's|records/[[:alnum:]]{5}-[[:alnum:]]{5}|records/$(doi_tail)|g' README.md
-	git add CITATION.cff README.md
-	git diff-index --quiet HEAD CITATION.cff README.md || \
-	  (git commit -m"chore: update DOI" CITATION.cff README.md && \
-	   git push -v --all)
+	git add CITATION.cff
+	git diff-index --quiet HEAD CITATION.cff || \
+	  git commit -m"chore: update DOI in CITATION.cff" CITATION.cff
+endif
 
-update-relatedlink: vars
+update-codemeta-link: vars
+ifdef latest_doi
 	$(eval new_id   := $(shell cut -f'2' -d'/' <<< $(latest_doi)))
 	$(eval new_link := $(rdm_url)/records/$(new_id))
 	@sed -i .bak -e '/"relatedLink"/ s|: ".*"|: "$(new_link)"|' codemeta.json
 	git add codemeta.json
 	git diff-index --quiet HEAD codemeta.json || \
-	  (git commit -m"chore: update links" codemeta.json && git push -v --all)
+	  git commit -m"chore: update relatedLink in codemeta.json" codemeta.json
+endif
+
+push-updates:
+ifdef latest_doi
+	git push -v --all
+endif
 
 
 # Cleanup ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
