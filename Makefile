@@ -191,9 +191,10 @@ update-citation: vars
 
 update-example:
 	@sed -i .bak -E -e "/.* version [0-9].[0-9]+.[0-9]+/ s/[0-9].[0-9]+.[0-9]+/$(version)/" sample-workflow.yml
+	@sed -i .bak -E -e "/.* version [0-9].[0-9]+.[0-9]+/ s/[0-9].[0-9]+.[0-9]+/$(version)/" README.md
 	@echo sample-workflow.yml updated ✨
 
-edited := codemeta.json CITATION.cff sample-workflow.yml
+edited := codemeta.json CITATION.cff sample-workflow.yml README.md
 
 commit-updates:
 	git add $(edited)
