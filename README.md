@@ -45,7 +45,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.1.
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.2.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler
 
@@ -54,8 +54,9 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
     # Configure this section ─────────────────────────────────────────────
 
     env:
-      # Files examined by the workflow:
-      files: '*.md'
+      # Files to check. (Put patterns on separate lines, no leading dash.)
+      files: |
+        **/*.md
 
       # Label assigned to issues created by this workflow:
       labels: bug
@@ -144,7 +145,21 @@ A few parameters control the behavior of Baler, as described below.
 
 #### `files`
 
-The input parameter `files` sets the file name pattern that identifies the Markdown files Baler examines. You can set this to multiple patterns by separating patterns with commas (without spaces).
+The input parameter `files` sets the file name pattern that identifies the Markdown files Baler examines. A `*` in a pattern matches zero or more characters but does not match `/`; a `**` in a pattern matches zero or more characters including `/`. For example, the following matches any `.md` file anywhere at the top level and in any subdirectory:
+
+```yml
+files: |
+  **/*.md
+```
+
+The following matches only top-level `.md` files and those at or below the top-level directory `docs`, but not other subdirectories:
+
+```yml
+files: |
+  *.md
+  docs/**/*.md
+```
+
 
 #### `labels`
 
