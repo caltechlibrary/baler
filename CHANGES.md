@@ -1,5 +1,12 @@
 # Change log for Baler
 
+## Version 2.0.2 (2024-01-31)
+
+Changes in this version:
+
+* The documentation did not adequately explain how to specify more than one path/pattern for the `files` parameter. Now fixed (hopefully), with new examples in `README.md`.
+
+
 ## Version 2.0.1 (2024-01-30)
 
 Changes in this version:
