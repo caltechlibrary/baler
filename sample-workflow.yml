@@ -7,8 +7,9 @@ name: Bad Link Reporter
 # Configure this section ─────────────────────────────────────────────
 
 env:
-  # Files examined by the workflow:
-  files: '*.md'
+  # Files to check. (Put patterns on separate lines, no leading dash.)
+  files: |
+    **/*.md
 
   # Label assigned to issues created by this workflow:
   labels: bug
