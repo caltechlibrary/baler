@@ -45,7 +45,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
 
     ```yml
-    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.2.
+    # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.3.
     # This is available as the file "sample-workflow.yml" from the source
     # code repository for Baler: https://github.com/caltechlibrary/baler
 
