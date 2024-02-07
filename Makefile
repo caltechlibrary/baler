@@ -242,22 +242,22 @@ print-next-steps: vars
 post-release: update-citation-doi update-codemeta-link push-updates
 
 update-citation-doi: vars
-ifdef latest_doi
-	sed -i .bak -e '/doi:/ s|doi: .*|doi: $(latest_doi)|' CITATION.cff
-	git add CITATION.cff
-	git diff-index --quiet HEAD CITATION.cff || \
-	  git commit -m"chore: update DOI in CITATION.cff" CITATION.cff
-endif
+	@if [ -n "$(latest_doi)" ]; then
+	  sed -i .bak -e '/doi:/ s|doi: .*|doi: $(latest_doi)|' CITATION.cff
+	  git add CITATION.cff
+	  git diff-index --quiet HEAD CITATION.cff || \
+	    git commit -m"chore: update DOI in CITATION.cff" CITATION.cff
+	fi
 
 update-codemeta-link: vars
-ifdef latest_doi
-	$(eval new_id   := $(shell cut -f'2' -d'/' <<< $(latest_doi)))
-	$(eval new_link := $(rdm_url)/records/$(new_id))
-	@sed -i .bak -e '/"relatedLink"/ s|: ".*"|: "$(new_link)"|' codemeta.json
-	git add codemeta.json
-	git diff-index --quiet HEAD codemeta.json || \
-	  git commit -m"chore: update relatedLink in codemeta.json" codemeta.json
-endif
+	@if [ -n "$(latest_doi)" ]; then
+	  $(eval new_id   := $(shell cut -f'2' -d'/' <<< $(latest_doi)))
+	  $(eval new_link := $(rdm_url)/records/$(new_id))
+	  @sed -i .bak -e '/"relatedLink"/ s|: ".*"|: "$(new_link)"|' codemeta.json
+	  git add codemeta.json
+	  git diff-index --quiet HEAD codemeta.json || \
+	    git commit -m"chore: update relatedLink in codemeta.json" codemeta.json
+	fi
 
 push-updates:
 ifdef latest_doi
