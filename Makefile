@@ -222,7 +222,7 @@ wait-on-iga:
 	sleep 2
 	$(eval pid := $(shell gh run list --workflow=iga.yml --limit 1 | tail -1 | awk -F $$'\t' '{print $$7}'))
 	gh run watch $(pid)
-	make post-release
+	$(MAKE) post-release
 
 print-next-steps: vars
 	@$(info ┏━━━━━━━━━━━━┓)

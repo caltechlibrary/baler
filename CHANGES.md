@@ -1,5 +1,13 @@
 # Change log for Baler
 
+## Version 2.0.3 (2024-02-06)
+
+Changes in this version:
+
+* Fix a minor bug in the Makefile that prevented `post-release` from being invoked automatically.
+* Replace relative links to images in `README.md` with absolute URLs to the files in raw.githubusercontent.com, to solve broken images in the GitHub Pages version.
+
+
 ## Version 2.0.2 (2024-01-31)
 
 Changes in this version:

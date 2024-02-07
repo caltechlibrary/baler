@@ -1,4 +1,4 @@
-# Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="30%" align="right" src=".graphics/baler.jpg">
+# Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="30%" align="right" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/baler.jpg">
 
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
 
@@ -106,10 +106,10 @@ Once the workflow is installed in your repository on GitHub, Baler will run when
 
 Right after installing the workflow in your GitHub repository, it's wise to do a manual test run in order to check that things are working as expected.
 
-1. Go to the _Actions_ tab in your repository and click on the workflow named "Bad Link Reporter" in the sidebar on the left<p align="center"><img src=".graphics/github-run-workflow.png" alt="Screenshot of GitHub actions workflow list" width="90%"></p>
-2. In the page shown by GitHub next, click the <kbd>Run workflow</kbd> button in the right-hand side of the blue strip<p align="center"><img src=".graphics/github-run-workflow-button.png" alt="Screenshot of GitHub Actions workflow run button" width="75%"></p>
-3. In the pull-down, click the green <kbd>Run workflow</kbd> button near the bottom<p align="center"><img src=".graphics/github-workflow-run-button.png" alt="Screenshot of GitHub Actions workflow run menu" width="40%"></p>
-4. Refresh the web page and a new line will be shown named after your workflow file<p align="center"><img src=".graphics/github-workflow-running.png" alt="Screenshot of GitHub Actions running" width="90%"></p>
+1. Go to the _Actions_ tab in your repository and click on the workflow named "Bad Link Reporter" in the sidebar on the left<p align="center"><img src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/github-run-workflow.png" alt="Screenshot of GitHub actions workflow list" width="90%"></p>
+2. In the page shown by GitHub next, click the <kbd>Run workflow</kbd> button in the right-hand side of the blue strip<p align="center"><img src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/github-run-workflow-button.png" alt="Screenshot of GitHub Actions workflow run button" width="75%"></p>
+3. In the pull-down, click the green <kbd>Run workflow</kbd> button near the bottom<p align="center"><img src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/github-workflow-run-button.png" alt="Screenshot of GitHub Actions workflow run menu" width="40%"></p>
+4. Refresh the web page and a new line will be shown named after your workflow file<p align="center"><img src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/github-workflow-running.png" alt="Screenshot of GitHub Actions running" width="90%"></p>
 5. Click the title of that running workflow to make GitHub show the progress and results.
 
 At the conclusion of the run, if any invalid or unreachable URLs were found in your repository's Markdown files, Baler will have opened a new issue to report the problems. If Baler found no problems, it will only print a message to that effect in the job results page.
