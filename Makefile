@@ -40,7 +40,7 @@ endif
 # The following is based on the approach posted by Jonathan Ben-Avraham to
 # Stack Overflow in 2014 at https://stackoverflow.com/a/25668869
 
-programs_needed = awk curl gh git jq sed
+programs_needed = curl git gh jq jsonlint yamllint markdownlint-cli2
 TEST := $(foreach p,$(programs_needed),\
 	  $(if $(shell which $(p)),_,$(error Cannot find program "$(p)")))
 
@@ -146,6 +146,7 @@ report: vars
 lint:
 	markdownlint-cli2 $(shell find . -name '*.md')
 	yamllint CITATION.cff $(shell find . -name '*.yml')
+	jsonlint -q codemeta.json
 
 #: Run unit tests and coverage tests.
 test tests:;
