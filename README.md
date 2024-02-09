@@ -1,3 +1,4 @@
+<!-- {% raw %} -->
 # Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="30%" align="right" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/baler.jpg">
 
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
@@ -236,3 +237,4 @@ This work was funded by the California Institute of Technology Library.
     <img width="100" height="100" alt="Caltech logo" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/caltech-round.png">
   </a>
 </div>
+<!-- {% endraw %} -->
