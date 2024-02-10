@@ -1,5 +1,15 @@
 # Change log for Baler
 
+## Version 2.0.4 (2024-02-09)
+
+* Changes in this version:
+
+* Fixed problem in which the sample workflow embedded in the GitHub Pages site (<https://caltechlibrary.github.io/baler>) was damaged because the contents were interpreted by Jekyll as variable references.
+* Fixed a bug in the Makefile preventing the post-release workflow from running.
+* Added a call to `jsonlint` in the `make lint` action, and a `jsonlint` config file.
+* Switched to a different CLI for `markdownlint` that has more options.
+
+
 ## Version 2.0.3 (2024-02-06)
 
 Changes in this version:
