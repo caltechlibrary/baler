@@ -4,8 +4,8 @@
   "name": "Baler – BAd Link reportER",
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
-  "version": "2.0.3",
-  "datePublished": "2024-02-06",
+  "version": "2.0.4",
+  "datePublished": "2024-02-09",
   "dateCreated": "2023-12-11",
   "author": [
     {
