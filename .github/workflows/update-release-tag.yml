@@ -1,0 +1,35 @@
+# Summary: move the tag for the major version number to the latest release.
+# This workflow originally came from the 2024-02-09 example shown at
+# https://github.com/marketplace/actions/release-tag-tracker
+
+name: Release tag tracker
+
+# Only run when new semver tag is pushed
+on:
+  workflow_dispatch:
+
+jobs:
+  update-release-tags:
+    name: Update tag for latest release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out source repository.
+        uses: actions/checkout@v4
+        with:
+          # Get complete history
+          fetch-depth: 0
+
+      - name: Update major version and latest tags.
+        uses: bewuethr/release-tracker-action@v1
+        env:
+          # GitHub token to enable pushing tags
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          # Move "latest" tag
+          update-latest: false
+          # Don't update the vX.Y tags
+          update-minor: false
+          # Expect vX.Y.Z format (default)
+          prepend-v: true
