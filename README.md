@@ -1,4 +1,3 @@
-<!-- {% raw %} -->
 # Baler<img alt="A baler making bales of hay on a farm" title="A baler making bales of hay on a farm. Photo by Glendon Kuhns." width="30%" align="right" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/baler.jpg">
 
 Baler (<em><ins><b>ba</b></ins>d <ins><b>l</b></ins>ink report<ins><b>er</b></ins></em>) is a [GitHub Action](https://docs.github.com/actions) that tests the URLs inside Markdown files of your GitHub repository. If any of them are invalid, Baler automatically opens a GitHub issue to report the problem(s).
@@ -44,7 +43,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
 1. In the main branch of your repository, create a `.github/workflows` directory if one does not already exist.
 2. In the `.github/workflows` directory, create a file named `bad-link-reporter.yml`.
 3. Copy and paste the [contents of `sample-workflow.yml`](https://raw.githubusercontent.com/caltechlibrary/baler/main/sample-workflow.yml) into your `bad-link-reporter.yml` file:
-
+      <!-- {% raw %} -->
     ```yml
     # GitHub Actions workflow for Baler (BAd Link reportER) version 2.0.4.
     # This is available as the file "sample-workflow.yml" from the source
@@ -96,7 +95,7 @@ To use Baler, you need to create a GitHub Actions workflow file in your reposito
               timeout:  ${{github.event.inputs.timeout  || env.timeout}}
               lookback: ${{github.event.inputs.lookback || env.lookback}}
     ```
-
+      <!-- {% endraw %} -->
 4. Save the file, add it to your git repository, and commit the changes.
 5. (If you did the steps above outside of GitHub) Push your repository changes to GitHub.
 
@@ -237,4 +236,3 @@ This work was funded by the California Institute of Technology Library.
     <img width="100" height="100" alt="Caltech logo" src="https://raw.githubusercontent.com/caltechlibrary/baler/main/.graphics/caltech-round.png">
   </a>
 </div>
-<!-- {% endraw %} -->
