@@ -1,5 +1,10 @@
 # Change log for Baler
 
+
+## Version 2.0.5 (2026-07-30)
+
+* Maintenance release with various version bumps.
+
 ## Version 2.0.4 (2024-02-09)
 
 * Changes in this version:
