@@ -318,8 +318,6 @@ runs:
         <p>Ticket <a href=\"$link\">#${{env.issue-number}}</a> has been
         created.</p>"
         echo "$msg" >> $GITHUB_STEP_SUMMARY
-        # Report a failure.
-        exit 1
 
     - name: Log internal variable values in debug mode or if a failure occurs.
       if: inputs.debug == 'true' || failure()
