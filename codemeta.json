@@ -4,7 +4,7 @@
   "name": "Baler – BAd Link reportER",
   "identifier": "baler",
   "description": "Baler is a GitHub Action that tests the URLs inside Markdown files in your GitHub repository and opens an issue if it finds any problems.",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "datePublished": "2024-02-09",
   "dateCreated": "2023-12-11",
   "author": [
@@ -16,23 +16,32 @@
         "@type": "Organization",
         "name": "California Institute of Technology Library"
       },
-      "email": "mhucka@caltech.edu",
       "@id": "https://orcid.org/0000-0001-9105-5960"
+    },
+    {
+            "@type": "Person",
+            "givenName": "Thomas E",
+            "familyName": "Morrell",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Caltech Library"
+            },
+            "email": "tmorrell@caltech.edu",
+            "@id": "https://orcid.org/0000-0001-9266-5146"
     }
   ],
   "maintainer": [
-    {
-      "@type": "Person",
-      "givenName": "Michael",
-      "familyName": "Hucka",
-      "affiliation": {
-        "@type": "Organization",
-        "name": "California Institute of Technology Library"
-      },
-      "email": "mhucka@caltech.edu",
-      "@id": "https://orcid.org/0000-0001-9105-5960"
-    }
-  ],
+        {
+            "@id": "https://orcid.org/0000-0001-9266-5146",
+            "@type": "Person",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Caltech Library"
+            },
+            "familyName": "Morrell",
+            "givenName": "Thomas E."
+        }
+    ],
   "funder": {
     "@id": "https://ror.org/05dxps055",
     "@type": "Organization",
@@ -45,7 +54,7 @@
       "name": "California Institute of Technology"
     }
   ],
-  "copyrightYear": 2024,
+  "copyrightYear": 2026,
   "license": "https://github.com/caltechlibrary/baler/blob/main/LICENSE",
   "isAccessibleForFree": true,
   "url": "https://caltechlibrary.github.io/baler",
