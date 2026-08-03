@@ -39,6 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      contents: read
     steps:
       - uses: caltechlibrary/baler@v2
         with:
