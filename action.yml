@@ -1,11 +1,11 @@
 # Summary: GitHub Action definition file for Baler – the Bad Link Reporter.
 #
-# Copyright 2024 California Institute of Technology.
+# Copyright 2024-26 California Institute of Technology.
 # License: Modified BSD 3-clause – see file "LICENSE" in the project website.
 # Website: https://github.com/caltechlibrary/baler
 
 name: Baler – BAd Link reportER
-description: Test URLs in Markdown files and open an issue for problems found
+description: Test URLs in files and open an issue for problems found
 
 inputs:
 
@@ -221,7 +221,7 @@ runs:
     #    2 = link check failures (if any non-excluded link failed the check)
     #    3 = errors in the config file
 
-    - name: Run link checker to test URLs inside Markdown files.
+    - name: Run link checker to test URLs inside files.
       if: env.continue == 'true'
       shell: bash {0}
       continue-on-error: true
@@ -301,7 +301,7 @@ runs:
       id: create-issue
       uses: peter-evans/create-issue-from-file@v6
       with:
-        title: Invalid URLs in Markdown files
+        title: Invalid URL(s) in repository files
         content-filepath: ${{env.lychee_output}}
         labels: ${{env.labels}}
         token: ${{github.token}}
